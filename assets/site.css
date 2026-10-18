@@ -73,7 +73,7 @@ p{margin:0 0 1em;max-width:60ch}
 .serp-hero .serp .gap{padding:9px 16px}
 .stat-sec .lede{font-size:clamp(1.3rem,2vw,1.6rem)}
 .alt{margin:1rem 0 0;font-size:1rem}
-.proof{font-size:.9375rem;color:var(--ice);border-left:2px solid var(--ice);padding-left:.9rem;margin:1.5rem 0 0;max-width:46ch}
+.proof-unused{font-size:.9375rem;color:var(--ice);border-left:2px solid var(--ice);padding-left:.9rem;margin:1.5rem 0 0;max-width:46ch}
 #enquiry{scroll-margin-top:140px}
 .hero .kw{font-size:clamp(1.2rem,1.8vw,1.45rem);line-height:1.4;font-weight:700;color:var(--navy);margin:1.75rem 0 0;max-width:30ch}
 .stat{margin:2.25rem 0 0;padding-top:1.25rem;border-top:1px solid var(--line);max-width:44ch;font-size:1rem;line-height:1.5}
@@ -131,7 +131,12 @@ p{margin:0 0 1em;max-width:60ch}
 
 /* results */
 .navy .split h2{font-size:clamp(1.9rem,3vw,2.6rem)}
-.big{font-size:clamp(6rem,14vw,11rem);line-height:.85;font-weight:700;letter-spacing:-.06em;margin:0 0 1rem;color:var(--white)}
+.big{font-size:clamp(6rem,14vw,11rem);line-height:.85;font-weight:700;letter-spacing:-.06em;margin:1.5rem 0 1rem;color:var(--white)}
+.big-cap{font-size:clamp(1.2rem,1.8vw,1.45rem);font-weight:700;line-height:1.3;margin:0 0 1.5rem;max-width:26ch}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0;padding:1.25rem 0 0;border-top:1px solid var(--ice)}
+.kpis dt{font-size:clamp(1.9rem,3vw,2.5rem);font-weight:700;letter-spacing:-.03em;line-height:1}
+.kpis dd{margin:.35rem 0 0;font-size:1rem}
+.note{font-size:.8125rem;color:var(--ice);margin:.75rem 0 1.5rem}
 .dates{margin:1.5rem 0 0;padding:0;display:grid;gap:0;border-top:1px solid rgba(180,200,234,.5);max-width:26rem}
 .dates div{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid rgba(180,200,234,.5)}
 .dates dt{color:var(--ice)}.dates dd{margin:0;font-weight:700}
@@ -237,3 +242,4 @@ p{margin:0 0 1em;max-width:60ch}
  .cookie{bottom:74px}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+.on-navy .small{color:var(--ice)}.on-navy .ph{color:var(--white);background:rgba(180,200,234,.15)}

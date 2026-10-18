@@ -5,6 +5,8 @@ Static HTML/CSS with a little JavaScript. No framework, no third-party calls exc
 ## Pages
 `/` Home · `/what-we-do/` · `/results/` (Eaton Embroidery client case study) · `/about-dan/` · `/contact/` · `/privacy/` · `404.html`
 
+v5 (18/10/2026): case study leads with #2 on Google Maps for "embroidery Derby" in a few weeks (brand-new business, launched July 2026, from page 2–3), plus client-reported figures (80% of work inbound, about 10 more enquiries a week).
+
 v4 (18/10/2026): rankings diagram moved into the hero (before the form on mobile, beside it on desktop); stat section is text only; positioning widened to Derby, the East Midlands and UK-wide (remote); town page template added (no town pages published).
 
 v3 (18/10/2026, after G Bot review): honest case study (work first, "held #2" proof line), no checkbox on the form, "trades and local businesses", rotating "barber near me" example, phone flag, first-person voice, Backlinko stat linked and described as organic results, service-area schema (no address), FAQ schema identical to the visible FAQ.

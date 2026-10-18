@@ -10,7 +10,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://twresults.com"
 LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
-V = "4"  # asset cache-buster
+V = "5"  # asset cache-buster
 
 # PHONE FLAG: leave PHONE_DISPLAY = None until the giffgaff number is live. [TWR PHONE: giffgaff number to come]
 # Set both, e.g. PHONE_DISPLAY = "07xxx xxxxxx" and PHONE_E164 = "+447xxxxxxxxx" (NEVER 07944 915880),
@@ -244,8 +244,15 @@ def area_url(a): return f"areas/{a['slug']}/"
 AREA_LINKS = {a["name"]: area_url(a) for a in AREA_PAGES}
 towns_li = "".join(f'<li><a href="{AREA_LINKS[t]}">{t}</a></li>' if t in AREA_LINKS else f"<li>{t}</li>" for t in TOWNS)
 CITE = f'<a href="{BACKLINKO_URL}" rel="noopener">Backlinko organic click-through rate study</a>, updated 16/04/2025'
-EE_WORK = "profile tidied up, every review replied to, services list and weekly posts prepared, directory listings started."
-EE_PROOF = "Held #2 on Google Maps for &lsquo;embroidery Derby&rsquo; while I built the foundations (checked 10/09/2026 and 07/10/2026)."
+EE_WORK = "I built an optimised website, set up and optimised the Google Business Profile, and handled reviews, posts and citations."
+EE_START = "Brand-new business, launched July 2026, from page 2&ndash;3 to #2 on Google Maps in a few weeks. Search: &ldquo;embroidery Derby&rdquo;."
+EE_CHECKS = "Checked 10/09/2026 and 07/10/2026: #2 both times, position held."
+EE_FIGS = [("80%", "of work now inbound"), ("About 10", "more enquiries a week")]
+def ee_result():
+    figs = "".join(f"<div><dt>{a}</dt><dd>{b}</dd></div>" for a, b in EE_FIGS)
+    return (f'<p class="big" aria-hidden="true">#2</p>'
+            f'<p class="big-cap">#2 on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks.</p>'
+            f'<dl class="kpis">{figs}</dl><p class="note">Figures reported by the client.</p>')
 def call_cta(extra=""):
     return f'<div class="cta"><a class="btn" href="{TEL}">Call Dan</a><a class="tel" href="{TEL}">{PHONE}</a>{extra}</div>' if HAS_PHONE else (f'<div class="cta">{extra}</div>' if extra else "")
 
@@ -287,9 +294,10 @@ home = f"""
  <div class="wrap"><div class="split">
   <div>
    <h2 id="h-results">Results for a Derby business</h2>
+   {ee_result()}
    <p class="lede">Eaton Embroidery, a Derby embroidery business, is a client.</p>
-   <p>Work so far: {EE_WORK}</p>
-   <p class="proof">{EE_PROOF}</p>
+   <p>{EE_WORK}</p>
+   <p class="small">{EE_START} {EE_CHECKS}</p>
    <p style="margin-top:1.5rem"><a class="link" href="results/">See the case study</a></p>
   </div>
   <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
@@ -374,21 +382,21 @@ results = f"""
 <section class="page-hero"><div class="wrap">
  {crumbs_html(RES_CRUMBS, 1)}
  <h1>Local SEO case study: an embroidery business in Derby</h1>
- <p class="lede">Eaton Embroidery is a Derby embroidery business and a TW Results client. I log the work and the results with dates, good or bad.</p>
+ <p class="lede">Eaton Embroidery is a Derby embroidery business and a TW Results client. I built its website and Google Business Profile and took it to #2 on Google Maps for &ldquo;embroidery Derby&rdquo; within a few weeks.</p>
 </div></section>
 <section class="sec" aria-labelledby="h-work"><div class="wrap"><div class="split">
- <h2 id="h-work">The work so far</h2>
- <ul class="plain"><li>Google Business Profile tidied up (logo fixed, review alerts on)</li><li>Every new Google review replied to</li><li>An expanded services list prepared for the profile</li><li>Weekly profile posts prepared</li><li>Directory listings started (Yell done, Bing submitted)</li></ul>
+ <h2 id="h-work">What I did</h2>
+ <ul class="plain"><li>Built an optimised website</li><li>Set up and optimised the Google Business Profile</li><li>Reviews: every new review replied to</li><li>Regular Google posts</li><li>Citations: matching business details on directories such as Yell and Bing</li></ul>
 </div></div></section>
 <section class="sec navy on-navy" aria-labelledby="h-fact"><div class="wrap"><div class="split">
  <div><h2 id="h-fact">Results for a Derby business</h2>
-  <p class="proof">{EE_PROOF}</p>
-  <p>No upward movement yet. The aim now is to win more searches.</p></div>
+  {ee_result()}
+  <p class="small">{EE_START}</p></div>
  <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
 </div></div></section>
 <section class="sec pale" aria-labelledby="h-log"><div class="wrap"><div class="split">
  <h2 id="h-log">Results log</h2>
- <ol class="log"><li><time datetime="2026-09-10">10/09/2026</time><p>Baseline: #2 on Google Maps for &lsquo;embroidery Derby&rsquo;.</p></li><li><time datetime="2026-10-07">07/10/2026</time><p>Checked again: #2, no change yet.</p></li></ol>
+ <ol class="log"><li><time datetime="2026-07">July 2026</time><p>Brand-new business launched. Page 2&ndash;3 on Google Maps for &ldquo;embroidery Derby&rdquo;.</p></li><li><time datetime="2026-09-10">10/09/2026</time><p>Checked after the work: #2 on Google Maps for &ldquo;embroidery Derby&rdquo;.</p></li><li><time datetime="2026-10-07">07/10/2026</time><p>Checked again: #2, position held.</p></li></ol>
 </div></div></section>
 <section class="band navy on-navy"><div class="wrap"><h2>Where do you rank?</h2><a class="btn" href="../contact/#enquiry">Get a free Google check</a></div></section>
 """
@@ -498,7 +506,7 @@ PAGES = [
      "Google Business Profile and local SEO, website fixes and new websites for trades and local businesses in Derby, the East Midlands and UK-wide.",
      wwd, [ORG, crumbs_schema(WWD_CRUMBS)], "what-we-do/"),
     ("results/", "results/index.html", 1, "Local SEO Case Study, Derby | TW Results",
-     "Case study: the local SEO work for Eaton Embroidery, a Derby embroidery business, with dated Google Maps results logged good or bad.",
+     "Case study: a brand-new Derby embroidery business, launched July 2026, from page 2–3 to #2 on Google Maps for 'embroidery Derby' in a few weeks.",
      results, [ORG, crumbs_schema(RES_CRUMBS)], "results/"),
     ("about-dan/", "about-dan/index.html", 1, "About Dan Cooper, Local SEO Derby | TW Results",
      "Dan Cooper runs TW Results from Derby, helping trades and local businesses get found on Google. No account managers: you deal with Dan.",
