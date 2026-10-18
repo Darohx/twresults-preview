@@ -10,7 +10,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://twresults.com"
 LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
-V = "2"  # asset cache-buster
+V = "4"  # asset cache-buster
 
 # PHONE FLAG: leave PHONE_DISPLAY = None until the giffgaff number is live. [TWR PHONE: giffgaff number to come]
 # Set both, e.g. PHONE_DISPLAY = "07xxx xxxxxx" and PHONE_E164 = "+447xxxxxxxxx" (NEVER 07944 915880),
@@ -31,6 +31,9 @@ BACKLINKO_URL = "https://backlinko.com/google-ctr-stats"
 CALLBACK = "I'll call you back within one working day."
 # DRAFT town list: must match the Google profile service area before launch
 TOWNS = ["Derby", "Chellaston", "Alvaston", "Mickleover", "Littleover", "Allestree", "Spondon", "Belper", "Ripley", "Long Eaton", "Ashby"]
+REACH = "Derby, the East Midlands and UK-wide (remote)"
+REACH_LINE = "Based in Derby. Working across the East Midlands, and with businesses UK-wide remotely."
+WIDE_AREAS = [{"@type": "AdministrativeArea", "name": "East Midlands"}, {"@type": "Country", "name": "United Kingdom"}]
 TOWNS_DRAFT = '<span class="ph">[DRAFT: town list to confirm with Dan]</span>'
 
 NAV = [("what-we-do/", "What we do"), ("results/", "Results"), ("about-dan/", "About Dan"), ("contact/", "Contact")]
@@ -52,12 +55,12 @@ def org_schema():
         "email": EMAIL,
         "logo": SITE + "/assets/apple-touch-icon.png",
         "image": SITE + "/assets/og-image.png",
-        "description": "Local SEO, Google Business Profile work and websites for trades and local businesses in Derby and nearby towns.",
+        "description": "Local SEO, Google Business Profile work and websites for trades and local businesses in Derby, the East Midlands and UK-wide (remote).",
         "founder": {"@type": "Person", "@id": SITE + "/about-dan/#dan", "name": "Dan Cooper"},
-        "areaServed": [{"@type": "City", "name": t} for t in TOWNS],
+        "areaServed": [{"@type": "City", "name": t} for t in TOWNS] + WIDE_AREAS,
         "knowsAbout": ["Local SEO", "Google Business Profile optimisation", "Google Maps rankings", "Websites for tradespeople"],
         "hasOfferCatalog": {"@type": "OfferCatalog", "name": "Services", "itemListElement": [
-            {"@type": "Offer", "itemOffered": {"@type": "Service", "name": n, "serviceType": t, "areaServed": [{"@type": "City", "name": t} for t in TOWNS]}}
+            {"@type": "Offer", "itemOffered": {"@type": "Service", "name": n, "serviceType": t, "areaServed": [{"@type": "City", "name": t} for t in TOWNS] + WIDE_AREAS}}
             for n, t in [("Google Maps and local SEO", "Local SEO and Google Business Profile optimisation"),
                          ("Website fixes", "Website improvements for trades"),
                          ("New websites for trades", "Web design for tradespeople")]]},
@@ -99,8 +102,7 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None):
     robots = "" if LIVE else '<meta name="robots" content="noindex, nofollow">\n'
     navli = "".join('<li><a href="%s%s"%s>%s</a></li>' % (p, u, ' aria-current="page"' if u == current else "", t) for u, t in NAV)
     sch = "".join('<script type="application/ld+json">%s</script>\n' % json.dumps(s, ensure_ascii=False, separators=(",", ":")) for s in (schema or []))
-    form_href = "#enquiry" if slug == "" else p + "contact/#enquiry"
-    if slug == "contact/": form_href = "#enquiry"
+    form_href = "#enquiry" if (slug in ("", "contact/") or slug.startswith("areas/")) else p + "contact/#enquiry"
     head_btn = f'<a class="btn" href="{TEL}">Call Dan</a>' if HAS_PHONE else f'<a class="btn" href="{form_href}">Free Google check</a>'
     bar_btn = f'<a class="btn" href="{TEL}">Call Dan</a>' if HAS_PHONE else f'<a class="btn" href="{form_href}">Get a free Google check</a>'
     foot_phone = f'<p>Call: <a href="{TEL}">{PHONE}</a></p>' if HAS_PHONE else ""
@@ -159,7 +161,7 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None):
     <h2>Get hold of Dan</h2>
     {foot_phone}
     <p><a href="mailto:{EMAIL}">{EMAIL}</a></p>
-    <p>Local SEO and websites for trades and local businesses in Derby and nearby towns.</p>
+    <p>Local SEO and websites for trades and local businesses. {REACH_LINE}</p>
    </div>
   </div>
   <div class="legal"><p>&copy; 2026 TW Results. Daniel Cooper trading as TW Results.</p></div>
@@ -195,9 +197,10 @@ def form(depth, heading_tag="h2", heading="Free Google check"):
  </form>
 </div>"""
 
-def serp():
+def serp(hero=False):
     rows = "".join(f'<li><span class="n">{n}</span><span><span class="nm">Competitor</span><span class="bar"></span><span class="bar s"></span></span></li>' for n in ("1", "2", "3"))
-    return f"""<figure style="margin:0">
+    return f"""<figure class="{'serp-hero' if hero else ''}" style="margin:0">
+ <p class="serp-h">Three names. One phone call.</p>
  <div class="serp" role="img" aria-label="A mock page of Google search results for a local service near me in Derby. Three competitors fill the top three places. Your business is on page 2.">
   <div class="serp-q"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke="#121F45" stroke-width="2"/><path d="M11.6 11.6 L16 16" stroke="#121F45" stroke-width="2"/></svg><span><span id="trade">barber</span> near me, Derby</span></div>
   <ol>{rows}</ol>
@@ -228,7 +231,18 @@ STEPS = [
 ]
 
 # ---------------- Home ----------------
-towns_li = "".join(f"<li>{t}</li>" for t in TOWNS)
+# ---------------- Town / city pages (template) ----------------
+# To publish a town page, add an entry to AREA_PAGES (see README). Nothing is published while it's empty.
+# Each entry needs its own unique intro and local detail; never copy one town's text to another.
+AREA_PAGES = [
+    # {"name": "Chellaston", "slug": "chellaston",
+    #  "desc": "Local SEO, Google Maps and websites for trades and local businesses in Chellaston, Derby. Free Google check from Dan.",
+    #  "intro": "One or two sentences that are true about working with businesses in Chellaston.",
+    #  "local": ["A real, specific local point", "Another one"]},
+]
+def area_url(a): return f"areas/{a['slug']}/"
+AREA_LINKS = {a["name"]: area_url(a) for a in AREA_PAGES}
+towns_li = "".join(f'<li><a href="{AREA_LINKS[t]}">{t}</a></li>' if t in AREA_LINKS else f"<li>{t}</li>" for t in TOWNS)
 CITE = f'<a href="{BACKLINKO_URL}" rel="noopener">Backlinko organic click-through rate study</a>, updated 16/04/2025'
 EE_WORK = "profile tidied up, every review replied to, services list and weekly posts prepared, directory listings started."
 EE_PROOF = "Held #2 on Google Maps for &lsquo;embroidery Derby&rsquo; while I built the foundations (checked 10/09/2026 and 07/10/2026)."
@@ -240,23 +254,25 @@ home = f"""
  <div class="wrap"><div class="hero-grid">
   <div>
    <h1 id="h1">{TAGLINE}</h1>
-   <p class="kw">Local SEO, Google Maps and websites for trades and local businesses in Derby and nearby towns.</p>
+   <p class="kw">Local SEO, Google Maps and websites for trades and local businesses in {REACH}.</p>
    {call_cta()}
+   {serp(hero=True)}
+  </div>
+  <div class="hero-side">
+   {form(0)}
    <p class="alt">Prefer email? <a href="mailto:{EMAIL}">{EMAIL}</a></p>
   </div>
-  {form(0)}
  </div></div>
 </section>
 
-<section class="sec" aria-labelledby="h-problem">
- <div class="wrap"><div class="split mid">
+<section class="sec stat-sec" aria-labelledby="h-problem">
+ <div class="wrap"><div class="split">
+  <h2 id="h-problem">Page 2 gets almost nothing.</h2>
   <div>
-   <h2 id="h-problem">Page 2 gets almost nothing.</h2>
    <p class="lede">The top 3 Google search results get 54.4% of all clicks. Only 0.63% of searchers click anything on page 2.</p>
    <p>For your trade, in your area, the top 3 is your competitors. I fix that.</p>
    <p class="small">Source: {CITE}. Organic search results, not the map.</p>
   </div>
-  {serp()}
  </div></div>
 </section>
 
@@ -285,7 +301,7 @@ home = f"""
   {headshot()}
   <div>
    <h2 id="h-dan">You deal with me, Dan</h2>
-   <p class="lede">I&rsquo;m Dan Cooper. I help trades and local businesses in Derby that are good at what they do but hard to find on Google.</p>
+   <p class="lede">I&rsquo;m Dan Cooper. I help trades and local businesses, in Derby and further afield, that are good at what they do but hard to find on Google.</p>
    <p>No account managers, no call centre. If something won&rsquo;t help, I&rsquo;ll tell you before you spend anything.</p>
    <p><a class="link" href="about-dan/">About me</a></p>
   </div>
@@ -310,8 +326,9 @@ home = f"""
  <div class="wrap"><div class="split">
   <h2 id="h-areas">Areas I cover</h2>
   <div>
+   <p class="lede">{REACH_LINE}</p>
    <ul class="towns">{towns_li}</ul>
-   <p class="small">Derby and nearby towns. {TOWNS_DRAFT}</p>
+   <p class="small">Towns around Derby I cover in person. {TOWNS_DRAFT}</p>
    <div class="cta"><a class="btn" href="#enquiry">Get a free Google check</a></div>
   </div>
  </div></div>
@@ -385,7 +402,7 @@ about = f"""
   {headshot()}
   <div>
    <h1>Dan Cooper, local SEO in Derby</h1>
-   <p class="lede">I run TW Results from Derby. I work with trades and local businesses that are good at what they do but hard to find on Google.</p>
+   <p class="lede">I run TW Results from Derby and work with trades and local businesses across the East Midlands and UK-wide. They&rsquo;re good at what they do but hard to find on Google.</p>
    <p>I keep it simple: find what&rsquo;s wrong, fix it, show you the result every month. No account managers, no call centre.</p>
    <p><span class="ph">[DAN TO ADD 1 TO 2 LINES OF REAL BACKGROUND]</span></p>
    {call_cta('<a class="link" href="../contact/#enquiry">Get a free Google check</a>')}
@@ -408,7 +425,7 @@ contact = f"""
    <dl class="facts">
     <div><dt>Email</dt><dd><a href="mailto:{EMAIL}">{EMAIL}</a></dd></div>
     <div><dt>Meetings</dt><dd>{ADDRESS}</dd></div>
-    <div><dt>Covering</dt><dd>Derby and nearby towns</dd></div>
+    <div><dt>Covering</dt><dd>{REACH}</dd></div>
    </dl>
   </div>
   {form(1)}
@@ -441,13 +458,44 @@ notfound = f"""
 </div></section>
 """
 
+def area_page(a):
+    """Reusable town/city page: /areas/<slug>/ with its own title, meta, H1, breadcrumb and schema."""
+    name, P = a["name"], "../../"
+    crumbs = [("", "Home"), (area_url(a), name)]
+    title = a.get("title") or f"Local SEO in {name} | TW Results"
+    assert a.get("desc") and a.get("intro"), "each town page needs its own desc and intro"
+    local = "".join(f"<li>{x}</li>" for x in a.get("local", []))
+    body = f"""
+<section class="page-hero"><div class="wrap">
+ {crumbs_html(crumbs, 2)}
+ <div class="hero-grid">
+  <div>
+   <h1>Local SEO and websites in {name}</h1>
+   <p class="lede">{a["intro"]}</p>
+   {f'<ul class="plain" style="margin-top:1.5rem">{local}</ul>' if local else ""}
+  </div>
+  {form(2)}
+ </div>
+</div></section>
+<section class="sec pale" aria-labelledby="h-svc"><div class="wrap">
+ <h2 id="h-svc">What I do for {name} businesses</h2>
+ <ul class="rows">{"".join(f'<li><h3>{h}</h3><p>{t}</p><a class="link" href="{P}what-we-do/#{s_}">More<span class="vh"> about {h.lower()}</span></a></li>' for s_, h, t in SERVICES)}</ul>
+</div></section>
+<section class="band navy on-navy"><div class="wrap"><h2>Where do you rank in {name}?</h2><a class="btn" href="#enquiry">Get a free Google check</a></div></section>
+"""
+    svc_schema = {"@context": "https://schema.org", "@type": "Service", "name": f"Local SEO in {name}",
+                  "serviceType": "Local SEO and Google Business Profile optimisation",
+                  "provider": {"@id": SITE + "/#business"}, "areaServed": {"@type": "City", "name": name},
+                  "url": SITE + "/" + area_url(a)}
+    return (area_url(a), area_url(a) + "index.html", 2, title, a["desc"], body, [ORG, crumbs_schema(crumbs), svc_schema], None)
+
 ORG = org_schema()
 PAGES = [
     ("", "index.html", 0, "Local SEO for Trades & Businesses, Derby | TW Results",
-     "Get found on Google. Get more work. Local SEO, Google Maps and websites for trades and local businesses in Derby. Free Google check.",
+     "Local SEO, Google Maps and websites for trades and local businesses in Derby, the East Midlands and UK-wide. Free Google check.",
      home, [ORG, faq_schema()], None),
     ("what-we-do/", "what-we-do/index.html", 1, "Local SEO & Websites, Derby | TW Results",
-     "Google Business Profile and local SEO, website fixes and new websites for trades and local businesses in Derby and nearby towns.",
+     "Google Business Profile and local SEO, website fixes and new websites for trades and local businesses in Derby, the East Midlands and UK-wide.",
      wwd, [ORG, crumbs_schema(WWD_CRUMBS)], "what-we-do/"),
     ("results/", "results/index.html", 1, "Local SEO Case Study, Derby | TW Results",
      "Case study: the local SEO work for Eaton Embroidery, a Derby embroidery business, with dated Google Maps results logged good or bad.",
@@ -464,6 +512,8 @@ PAGES = [
     ("404.html", "404.html", 0, "Page not found | TW Results",
      "That page doesn't exist. Go to the TW Results home page or ask for a free Google check.", notfound, None, None),
 ]
+
+PAGES += [area_page(a) for a in AREA_PAGES]
 
 for slug, out, depth, title, desc, body, schema, cur in PAGES:
     if depth == 1:

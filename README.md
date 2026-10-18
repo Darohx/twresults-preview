@@ -5,6 +5,8 @@ Static HTML/CSS with a little JavaScript. No framework, no third-party calls exc
 ## Pages
 `/` Home · `/what-we-do/` · `/results/` (Eaton Embroidery client case study) · `/about-dan/` · `/contact/` · `/privacy/` · `404.html`
 
+v4 (18/10/2026): rankings diagram moved into the hero (before the form on mobile, beside it on desktop); stat section is text only; positioning widened to Derby, the East Midlands and UK-wide (remote); town page template added (no town pages published).
+
 v3 (18/10/2026, after G Bot review): honest case study (work first, "held #2" proof line), no checkbox on the form, "trades and local businesses", rotating "barber near me" example, phone flag, first-person voice, Backlinko stat linked and described as organic results, service-area schema (no address), FAQ schema identical to the visible FAQ.
 
 v2 (18/10/2026): shorter copy, enquiry form in the home hero (Formspree, `_gotcha` spam trap, on-page thank-you), "You: page 2" map illustration, keyword-led titles `[Service] [City] | TW Results`, ProfessionalService + FAQPage + BreadcrumbList schema. `python3 _build/wordcount.py` prints words per page. Eaton Embroidery is a client case study only: never describe it as Dan's company or "our group".
@@ -39,3 +41,16 @@ The preview lives at https://darohx.github.io/twresults-preview/ and must not be
 | `[GA4 ID]` | `assets/site.js` | The cookie bar and GA4 stay off until this is real |
 
 Acceptance checks are in `/home/box/business/TWR/Website/TWR_Website_Rebuild_Brief.md` section 8.
+
+## Adding a town or city page (template ready, none published yet)
+
+Town pages are built by `area_page()` in `_build/build.py` and live at `/areas/<slug>/`. Each one gets its own title (default "Local SEO in <Town> | TW Results"), meta description, H1 ("Local SEO and websites in <Town>"), breadcrumb (Home > Town, with BreadcrumbList schema), a Service schema with `areaServed` set to that town, the services list and the enquiry form.
+
+To add one:
+1. In `_build/build.py`, add an entry to `AREA_PAGES`, for example
+   `{"name": "Chellaston", "slug": "chellaston", "desc": "<unique meta, under 155 characters>", "intro": "<1 to 2 true sentences about this town>", "local": ["<specific local point>", "..."]}`.
+   `"title"` is optional (keep it under 60 characters). The build stops if `desc` or `intro` is missing.
+2. Write unique text for every town. Don't copy one town's text to another (Google treats that as doorway pages).
+3. Run `python3 _build/build.py` (preview) or `--live`. The page is created, added to `sitemap.xml` automatically, and if `name` matches a town in `TOWNS`, that town in the home page's "Areas I cover" list becomes a link to it.
+
+Positioning: Derby-first SEO (home title, Derby in the H1 support line, the towns in `areaServed`), plus `REACH` = "Derby, the East Midlands and UK-wide (remote)" and `REACH_LINE` used in the support line, footer, areas section and contact page. `areaServed` also lists East Midlands (AdministrativeArea) and United Kingdom (Country).
