@@ -10,7 +10,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://twresults.com"
 LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
-V = "5"  # asset cache-buster
+V = "6"  # asset cache-buster
 
 # PHONE FLAG: leave PHONE_DISPLAY = None until the giffgaff number is live. [TWR PHONE: giffgaff number to come]
 # Set both, e.g. PHONE_DISPLAY = "07xxx xxxxxx" and PHONE_E164 = "+447xxxxxxxxx" (NEVER 07944 915880),
@@ -31,8 +31,8 @@ BACKLINKO_URL = "https://backlinko.com/google-ctr-stats"
 CALLBACK = "I'll call you back within one working day."
 # DRAFT town list: must match the Google profile service area before launch
 TOWNS = ["Derby", "Chellaston", "Alvaston", "Mickleover", "Littleover", "Allestree", "Spondon", "Belper", "Ripley", "Long Eaton", "Ashby"]
-REACH = "Derby, the East Midlands and UK-wide (remote)"
-REACH_LINE = "Based in Derby. Working across the East Midlands, and with businesses UK-wide remotely."
+REACH = "Derby, the East Midlands and UK-wide"
+REACH_LINE = "Based in Derby. Working across the East Midlands and UK-wide."
 WIDE_AREAS = [{"@type": "AdministrativeArea", "name": "East Midlands"}, {"@type": "Country", "name": "United Kingdom"}]
 TOWNS_DRAFT = '<span class="ph">[DRAFT: town list to confirm with Dan]</span>'
 
@@ -55,7 +55,7 @@ def org_schema():
         "email": EMAIL,
         "logo": SITE + "/assets/apple-touch-icon.png",
         "image": SITE + "/assets/og-image.png",
-        "description": "Local SEO, Google Business Profile work and websites for trades and local businesses in Derby, the East Midlands and UK-wide (remote).",
+        "description": "Local SEO, Google Business Profile work and websites for trades and local businesses in Derby, the East Midlands and UK-wide.",
         "founder": {"@type": "Person", "@id": SITE + "/about-dan/#dan", "name": "Dan Cooper"},
         "areaServed": [{"@type": "City", "name": t} for t in TOWNS] + WIDE_AREAS,
         "knowsAbout": ["Local SEO", "Google Business Profile optimisation", "Google Maps rankings", "Websites for tradespeople"],
@@ -75,10 +75,12 @@ def crumbs_html(items, depth):
     lis = "".join(f'<li><a href="{p}{u}">{n}</a></li>' for u, n in items[:-1]) + f'<li aria-current="page">{items[-1][1]}</li>'
     return f'<nav class="crumbs" aria-label="Breadcrumb"><ol>{lis}</ol></nav>'
 
+EXCL = "One business per trade, per [AREA]. When we work together, I won't take on a competitor in your trade in your [AREA]."
 FAQ = [
-    ("Can you guarantee I'll be number one?", "No. Nobody honest can. I do the work Google rewards and show you where you stand every month."),
+    ("Can you guarantee I'll be number one?", "No. Google decides the rankings, so anyone who guarantees you the top spot is guessing. What I can promise is the work that gives you the best chance, and a plain English report every month showing where you stand."),
     ("How long does it take?", "It depends on your trade, your town and who you're up against. You'll see your position in a report every month."),
-    ("Do I get tied into a contract?", "A minimum of 3 monthly payments, then month to month with 30 days' notice. [DRAFT: terms not final]"),
+    ("Do I get tied into a contract?", "There's a 3-month minimum, then it's month to month. Google rewards businesses that stay active and up to date: regular posts, new reviews and accurate details. It takes weeks for changes to show up in the rankings, so 3 months gives the work a fair chance to show results."),
+    ("Will you work with my competitors?", EXCL),
     ("I already have a website. Can you work with it?", "Yes, in most cases, whoever built it."),
     ("I only have a Facebook page.", "Then you need a simple website. I build those, set up in your name."),
     ("Who do I actually talk to?", "Me, Dan. Every time."),
@@ -164,7 +166,7 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None):
     <p>Local SEO and websites for trades and local businesses. {REACH_LINE}</p>
    </div>
   </div>
-  <div class="legal"><p>&copy; 2026 TW Results. Daniel Cooper trading as TW Results.</p></div>
+  <div class="legal"><p>&copy; 2026 TW Results. Daniel Cooper trading as TW Results, {ADDRESS}.</p></div>
  </div>
 </footer>
 <div class="callbar on-navy">{bar_btn}</div>
@@ -179,7 +181,8 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None):
 
 def form(depth, heading_tag="h2", heading="Free Google check"):
     p = "../" * depth
-    return f"""<div class="formcard"><span class="c3"></span><span class="c4"></span>
+    return f"""<p class="pre-form">If you&rsquo;re on page 2 of Google, almost nobody sees you. We work to get you onto the map and the first page.</p>
+<div class="formcard"><span class="c3"></span><span class="c4"></span>
  <{heading_tag} class="form-h">{heading}</{heading_tag}>
  <p class="promise">Send this and I&rsquo;ll run a free Google check on your business and call you back within one working day.</p>
  <form id="enquiry" action="{FORM_ENDPOINT}" method="POST" novalidate>
@@ -248,12 +251,12 @@ EE_WORK = "I built an optimised website, set up and optimised the Google Busines
 EE_START = "Brand-new business, launched July 2026, went from page 2&ndash;3 of Google to #2 on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks."
 EE_DISCLOSE = '<span class="ph">[EE DISCLOSURE: pending Dan]</span>'
 EE_CHECKS = "Checked 10/09/2026 and 07/10/2026: #2 both times, position held."
-EE_FIGS = [("80%", "of work now inbound"), ("About 10", "more enquiries a week")]
+EE_FIGS = [("80%", "of work now inbound (reported by the business owner)"), ("10", "more enquiries a week (reported by the business owner)")]
 def ee_result():
     figs = "".join(f"<div><dt>{a}</dt><dd>{b}</dd></div>" for a, b in EE_FIGS)
     return (f'<p class="big" aria-hidden="true">#2</p>'
             f'<p class="big-cap">#2 on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks.</p>'
-            f'<dl class="kpis">{figs}</dl><p class="note">Figures reported by the client.</p>')
+            f'<dl class="kpis">{figs}</dl>')
 def call_cta(extra=""):
     return f'<div class="cta"><a class="btn" href="{TEL}">Call Dan</a><a class="tel" href="{TEL}">{PHONE}</a>{extra}</div>' if HAS_PHONE else (f'<div class="cta">{extra}</div>' if extra else "")
 
@@ -311,7 +314,7 @@ home = f"""
   <div>
    <h2 id="h-dan">You deal with me, Dan</h2>
    <p class="lede">I&rsquo;m Dan Cooper. I help trades and local businesses, in Derby and further afield, that are good at what they do but hard to find on Google.</p>
-   <p>No account managers, no call centre. If something won&rsquo;t help, I&rsquo;ll tell you before you spend anything.</p>
+   <p>No account managers, no call centre. If I don&rsquo;t think something will help your business, I&rsquo;ll tell you up front, before you spend a penny on it.</p>
    <p><a class="link" href="about-dan/">About me</a></p>
   </div>
  </div></div>
@@ -321,6 +324,7 @@ home = f"""
  <div class="wrap">
   <h2 id="h-steps">How it works</h2>
   <ol class="steps">{"".join(f"<li><h3>{h}</h3><p>{t}</p></li>" for h, t in STEPS)}</ol>
+  <p class="excl">{ph_text(EXCL)}</p>
  </div>
 </section>
 
@@ -433,7 +437,7 @@ contact = f"""
    {phone_big}
    <dl class="facts">
     <div><dt>Email</dt><dd><a href="mailto:{EMAIL}">{EMAIL}</a></dd></div>
-    <div><dt>Meetings</dt><dd>{ADDRESS}</dd></div>
+    <div><dt>Meetings</dt><dd>In Derby, by appointment</dd></div>
     <div><dt>Covering</dt><dd>{REACH}</dd></div>
    </dl>
   </div>
@@ -450,7 +454,7 @@ privacy = f"""
 </div></section>
 <section class="sec"><div class="wrap"><div class="prose">
  <p><span class="ph">[DRAFT: Dan to approve]</span> Last updated <span class="ph">[DATE OF APPROVAL]</span>.</p>
- <h2>Who I am</h2><p>TW Results is run by Daniel Cooper, trading as TW Results, based in Derby. Email: <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
+ <h2>Who I am</h2><p>TW Results is run by Daniel Cooper, trading as TW Results. Address: {ADDRESS}. Email: <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
  <h2>What the form collects</h2><p>Your name, trade or business, phone number or email, and your message. I use it only to run your free Google check, reply to you and, if you become a client, to do the work. I don&rsquo;t sell it or pass it on.</p>
  <h2>Who processes it</h2><p>The form is sent through Formspree, which passes it to my email. My email runs on Google Workspace.</p>
  <h2>Analytics</h2><p>If you click Accept on the cookie bar, I use Google Analytics 4 to count visits. It doesn&rsquo;t load unless you accept.</p>

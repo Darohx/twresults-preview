@@ -243,3 +243,7 @@ p{margin:0 0 1em;max-width:60ch}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 .on-navy .small{color:var(--ice)}.on-navy .ph{color:var(--white);background:rgba(180,200,234,.15)}
+.pre-form{font-weight:700;color:var(--navy);font-size:1.0625rem;line-height:1.4;margin:0 0 1rem;max-width:40ch}
+.excl{margin:2rem 0 0;padding-top:1.25rem;border-top:1px solid var(--line);font-weight:700;color:var(--navy);max-width:60ch}
+.legal .ph{font-weight:400}
+.kpis{margin-bottom:1.75rem}

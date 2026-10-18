@@ -5,9 +5,11 @@ Static HTML/CSS with a little JavaScript. No framework, no third-party calls exc
 ## Pages
 `/` Home · `/what-we-do/` · `/results/` (Eaton Embroidery client case study) · `/about-dan/` · `/contact/` · `/privacy/` · `404.html`
 
-v5 (18/10/2026): case study leads with #2 on Google Maps for "embroidery Derby" in a few weeks (brand-new business, launched July 2026, from page 2–3), plus client-reported figures (80% of work inbound, about 10 more enquiries a week).
+v6 (18/10/2026): Dan's final copy: line above the form, enquiry figures "reported by the business owner", new guarantee and contract FAQ answers (contract no longer draft), exclusivity ("One business per trade, per [AREA]") in the FAQ and How it works, location wording is now "Derby, the East Midlands and UK-wide", trader name and [ADDRESS] only in the footer legal line and privacy page.
 
-v4 (18/10/2026): rankings diagram moved into the hero (before the form on mobile, beside it on desktop); stat section is text only; positioning widened to Derby, the East Midlands and UK-wide (remote); town page template added (no town pages published).
+v5 (18/10/2026): case study leads with #2 on Google Maps for "embroidery Derby" in a few weeks (brand-new business, launched July 2026, from page 2–3), plus client-reported figures (80% of work inbound, 10 more enquiries a week).
+
+v4 (18/10/2026): rankings diagram moved into the hero (before the form on mobile, beside it on desktop); stat section is text only; positioning widened to Derby, the East Midlands and UK-wide; town page template added (no town pages published).
 
 v3 (18/10/2026, after G Bot review): honest case study (work first, "held #2" proof line), no checkbox on the form, "trades and local businesses", rotating "barber near me" example, phone flag, first-person voice, Backlinko stat linked and described as organic results, service-area schema (no address), FAQ schema identical to the visible FAQ.
 
@@ -35,7 +37,7 @@ The preview lives at https://darohx.github.io/twresults-preview/ and must not be
 | `[FORM ENDPOINT]` | `FORM_ENDPOINT` in build.py (home + contact forms) | Formspree endpoint `https://formspree.io/f/...` |
 | `[ADDRESS: Derby, by appointment]` | contact | No street address. Director approval needed before any address is published |
 | `[DRAFT: town list to confirm with Dan]` | home "Areas we cover"; `TOWNS` also feeds schema `areaServed` | Must match the Google profile service area exactly |
-| `[DRAFT: terms not final]` | FAQ contract answer (stripped from FAQ schema) | Confirm terms against the client agreement |
+| `[AREA]` | Exclusivity line in How it works and the FAQ "Will you work with my competitors?" (kept literally in FAQ schema so it matches) | Dan to define the area per client (town, postcode district or radius) |
 | `[HEADSHOT]` | home, about | 4:5, 1200 x 1500px WebP, outdoors in daylight |
 | `[CASE STUDY SCREENSHOT 10/09/2026]`, `[CASE STUDY SCREENSHOT 07/10/2026]` | home, results | Dated Google Maps screenshots for "embroidery Derby", 16:10 |
 | `[DAN TO ADD 1 TO 2 LINES OF REAL BACKGROUND]` | about | |
@@ -55,4 +57,4 @@ To add one:
 2. Write unique text for every town. Don't copy one town's text to another (Google treats that as doorway pages).
 3. Run `python3 _build/build.py` (preview) or `--live`. The page is created, added to `sitemap.xml` automatically, and if `name` matches a town in `TOWNS`, that town in the home page's "Areas I cover" list becomes a link to it.
 
-Positioning: Derby-first SEO (home title, Derby in the H1 support line, the towns in `areaServed`), plus `REACH` = "Derby, the East Midlands and UK-wide (remote)" and `REACH_LINE` used in the support line, footer, areas section and contact page. `areaServed` also lists East Midlands (AdministrativeArea) and United Kingdom (Country).
+Positioning: Derby-first SEO (home title, Derby in the H1 support line, the towns in `areaServed`), plus `REACH` = "Derby, the East Midlands and UK-wide" and `REACH_LINE` ("Based in Derby. Working across the East Midlands and UK-wide.") used in the support line, footer, areas section and contact page. `areaServed` also lists East Midlands (AdministrativeArea) and United Kingdom (Country).
