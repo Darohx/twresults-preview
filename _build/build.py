@@ -245,7 +245,8 @@ AREA_LINKS = {a["name"]: area_url(a) for a in AREA_PAGES}
 towns_li = "".join(f'<li><a href="{AREA_LINKS[t]}">{t}</a></li>' if t in AREA_LINKS else f"<li>{t}</li>" for t in TOWNS)
 CITE = f'<a href="{BACKLINKO_URL}" rel="noopener">Backlinko organic click-through rate study</a>, updated 16/04/2025'
 EE_WORK = "I built an optimised website, set up and optimised the Google Business Profile, and handled reviews, posts and citations."
-EE_START = "Brand-new business, launched July 2026, from page 2&ndash;3 to #2 on Google Maps in a few weeks. Search: &ldquo;embroidery Derby&rdquo;."
+EE_START = "Brand-new business, launched July 2026, went from page 2&ndash;3 of Google to #2 on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks."
+EE_DISCLOSE = '<span class="ph">[EE DISCLOSURE: pending Dan]</span>'
 EE_CHECKS = "Checked 10/09/2026 and 07/10/2026: #2 both times, position held."
 EE_FIGS = [("80%", "of work now inbound"), ("About 10", "more enquiries a week")]
 def ee_result():
@@ -297,7 +298,7 @@ home = f"""
    {ee_result()}
    <p class="lede">Eaton Embroidery, a Derby embroidery business, is a client.</p>
    <p>{EE_WORK}</p>
-   <p class="small">{EE_START} {EE_CHECKS}</p>
+   <p class="small">{EE_START} {EE_DISCLOSE} {EE_CHECKS}</p>
    <p style="margin-top:1.5rem"><a class="link" href="results/">See the case study</a></p>
   </div>
   <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
@@ -391,7 +392,7 @@ results = f"""
 <section class="sec navy on-navy" aria-labelledby="h-fact"><div class="wrap"><div class="split">
  <div><h2 id="h-fact">Results for a Derby business</h2>
   {ee_result()}
-  <p class="small">{EE_START}</p></div>
+  <p class="small">{EE_START} {EE_DISCLOSE}</p></div>
  <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
 </div></div></section>
 <section class="sec pale" aria-labelledby="h-log"><div class="wrap"><div class="split">
@@ -506,7 +507,7 @@ PAGES = [
      "Google Business Profile and local SEO, website fixes and new websites for trades and local businesses in Derby, the East Midlands and UK-wide.",
      wwd, [ORG, crumbs_schema(WWD_CRUMBS)], "what-we-do/"),
     ("results/", "results/index.html", 1, "Local SEO Case Study, Derby | TW Results",
-     "Case study: a brand-new Derby embroidery business, launched July 2026, from page 2–3 to #2 on Google Maps for 'embroidery Derby' in a few weeks.",
+     "Case study: a new Derby embroidery business, launched July 2026, went from page 2–3 of Google to #2 on Google Maps for 'embroidery Derby' in a few weeks.",
      results, [ORG, crumbs_schema(RES_CRUMBS)], "results/"),
     ("about-dan/", "about-dan/index.html", 1, "About Dan Cooper, Local SEO Derby | TW Results",
      "Dan Cooper runs TW Results from Derby, helping trades and local businesses get found on Google. No account managers: you deal with Dan.",
