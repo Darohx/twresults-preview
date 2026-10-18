@@ -1,28 +1,38 @@
 #!/usr/bin/env python3
-"""Builds the TW Results static site into the repo root.
+"""Builds the TW Results static site (v2, 18/10/2026) into the repo root.
 Run:  python3 _build/build.py            (preview build: noindex + Disallow-all robots)
       python3 _build/build.py --live     (launch build: indexable, robots allows all, 404 base = /)
 """
-import json, os, sys, html
+import json, os, sys, html, re
 
 LIVE = "--live" in sys.argv
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://twresults.com"
 LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
+V = "2"  # asset cache-buster
 
 PHONE = '<span class="ph">[TWR PHONE: giffgaff number to come]</span>'
 TEL = "tel:[TWR PHONE E.164]"
-TOWNS = '<span class="ph">[SERVICE AREA TOWNS]</span>'
 EMAIL = "dan@twresults.com"
-H1_HOME = "The top 3 on Google get over half the clicks. For your trade, in your area, that's your competitors. We fix that."
-SUBLINE = "Get found on Google. Get more work."
-CLOSE = "Your competitors are getting your customers. We fix that."
+ADDRESS = '<span class="ph">[ADDRESS: Derby, by appointment]</span>'
+FORM_ENDPOINT = "[FORM ENDPOINT]"   # Formspree, e.g. https://formspree.io/f/xxxxxxx
+TAGLINE = "Get found on Google. Get more work."
+LOCKED = "The top 3 on Google get over half the clicks. For your trade, in your area, that's your competitors. We fix that."
+CALLBACK = "We'll call you back within one working day."
+# DRAFT town list: must match the Google profile service area before launch
+TOWNS = ["Derby", "Chellaston", "Alvaston", "Mickleover", "Littleover", "Allestree", "Spondon", "Belper", "Ripley", "Long Eaton", "Burton", "Ashby", "Nottingham"]
+TOWNS_DRAFT = '<span class="ph">[DRAFT: town list to confirm]</span>'
 
-NAV = [("what-we-do/", "What we do"), ("eaton-embroidery/", "Eaton Embroidery"), ("about-dan/", "About Dan"), ("contact/", "Contact")]
-
+NAV = [("what-we-do/", "What we do"), ("results/", "Results"), ("about-dan/", "About Dan"), ("contact/", "Contact")]
 WM = '<span class="tw">TW</span> <span class="rs">| Results</span>'
 
+def esc(s): return html.escape(s, quote=False)
+def ph_text(s):
+    """Escape text and wrap any [PLACEHOLDER] in a visible marker."""
+    return re.sub(r"(\[[A-Z][^\]]*\])", r'<span class="ph">\1</span>', esc(s))
+
+# ---------------- schema ----------------
 def org_schema():
     return {
         "@context": "https://schema.org",
@@ -34,35 +44,45 @@ def org_schema():
         # "telephone": add the real giffgaff number in +44 format once it is live (must match the Google profile)
         "logo": SITE + "/assets/apple-touch-icon.png",
         "image": SITE + "/assets/og-image.png",
-        "description": "TW Results helps tradespeople in Derby and the East Midlands get found on Google Maps and in search, fixes websites so they bring in calls, and builds simple websites for trades.",
-        "founder": {"@type": "Person", "name": "Dan Cooper"},
-        "address": {"@type": "PostalAddress", "addressLocality": "Derby", "addressCountry": "GB"},
-        "areaServed": [{"@type": "City", "name": "Derby"}, {"@type": "AdministrativeArea", "name": "East Midlands"}, "[SERVICE AREA TOWNS]"],
-        "knowsAbout": ["Local SEO", "Google Business Profile optimisation", "Google Maps listings", "Websites for tradespeople", "Online reviews"],
+        "description": "Local SEO, Google Business Profile work and websites for tradespeople in Derby and the East Midlands.",
+        "founder": {"@type": "Person", "@id": SITE + "/about-dan/#dan", "name": "Dan Cooper"},
+        "address": {"@type": "PostalAddress", "addressLocality": "Derby", "addressRegion": "Derbyshire", "addressCountry": "GB"},
+        "areaServed": [{"@type": "City", "name": t} for t in TOWNS] + [{"@type": "AdministrativeArea", "name": "East Midlands"}],
+        "knowsAbout": ["Local SEO", "Google Business Profile optimisation", "Google Maps rankings", "Websites for tradespeople"],
         "hasOfferCatalog": {"@type": "OfferCatalog", "name": "Services", "itemListElement": [
-            {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Getting you found on Google Maps and in search", "serviceType": "Google listing and local search work for trades"}},
-            {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Fixing your website so it brings in calls", "serviceType": "Website improvements for trades"}},
-            {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "A simple website if you haven't got one", "serviceType": "Websites for tradespeople"}}]},
+            {"@type": "Offer", "itemOffered": {"@type": "Service", "name": n, "serviceType": t, "areaServed": "Derby and the East Midlands"}}
+            for n, t in [("Google Maps and local SEO", "Local SEO and Google Business Profile optimisation"),
+                         ("Website fixes", "Website improvements for trades"),
+                         ("New websites for trades", "Web design for tradespeople")]]},
     }
 
+def crumbs_schema(items):
+    return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i, "name": n, "item": SITE + "/" + u} for i, (u, n) in enumerate(items, 1)]}
+
+def crumbs_html(items, depth):
+    p = "../" * depth
+    lis = "".join(f'<li><a href="{p}{u}">{n}</a></li>' for u, n in items[:-1]) + f'<li aria-current="page">{items[-1][1]}</li>'
+    return f'<nav class="crumbs" aria-label="Breadcrumb"><ol>{lis}</ol></nav>'
+
 FAQ = [
-    ("Can you guarantee I'll be number one?", "No. Nobody honest can. What we do is the work that Google rewards, and we show you where you stand every month."),
-    ("How long does it take?", "It depends on your trade, your area and who you're up against. We won't promise a timescale we can't back up. You'll see your position in a report every month."),
-    ("I'm too busy for this.", "That's the point. We do the work. You answer the phone."),
-    ("I tried this before and it did nothing.", "Ask them what they actually did. We tell you exactly what we're doing each month and show you the result, good or bad."),
+    ("Can you guarantee I'll be number one?", "No. Nobody honest can. We do the work Google rewards and show you where you stand every month."),
+    ("How long does it take?", "It depends on your trade, your town and who you're up against. You'll see your position in a report every month."),
+    ("Do I get tied into a contract?", "A minimum of 3 monthly payments, then month to month with 30 days' notice. [DRAFT: terms not final]"),
     ("I already have a website. Can you work with it?", "Yes, in most cases, whoever built it."),
-    ("I only have a Facebook page.", "Then you need a simple website. We build those."),
-    ("Do I get tied into a long contract?", "[DIRECTOR/DAN TO CONFIRM]"),
+    ("I only have a Facebook page.", "Then you need a simple website. We build those, set up in your name."),
     ("Who do I actually talk to?", "Dan. Every time."),
 ]
+def faq_html():
+    return '<div class="faq">' + "".join(f"<details><summary>{esc(q)}</summary><p>{ph_text(a)}</p></details>" for q, a in FAQ) + "</div>"
+def faq_schema():
+    return {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"\s*\[DRAFT[^\]]*\]", "", a)}} for q, a in FAQ]}
 
-def ph_text(s):
-    """Escape text and wrap any [PLACEHOLDER] in a visible marker."""
-    import re
-    s = html.escape(s, quote=False)
-    return re.sub(r"(\[[A-Z][^\]]*\])", r'<span class="ph">\1</span>', s)
-
-def page(slug, title, desc, body, schema=None, depth=1, current=None, og_title=None):
+# ---------------- shared pieces ----------------
+def page(slug, title, desc, body, schema=None, depth=1, current=None):
+    assert len(title) < 60, (title, len(title))
+    assert len(desc) < 155, (desc, len(desc))
     p = "../" * depth
     canon = SITE + "/" + slug
     base = ""
@@ -71,24 +91,21 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None, og_title=N
         p = ""
     robots = "" if LIVE else '<meta name="robots" content="noindex, nofollow">\n'
     navli = "".join('<li><a href="%s%s"%s>%s</a></li>' % (p, u, ' aria-current="page"' if u == current else "", t) for u, t in NAV)
-    sch = ""
-    for s in (schema or []):
-        sch += '<script type="application/ld+json">%s</script>\n' % json.dumps(s, ensure_ascii=False, separators=(",", ":"))
-    ogt = og_title or title
+    sch = "".join('<script type="application/ld+json">%s</script>\n' % json.dumps(s, ensure_ascii=False, separators=(",", ":")) for s in (schema or []))
     foot_links = "".join('<li><a href="%s%s">%s</a></li>' % (p, u, t) for u, t in [("", "Home")] + NAV + [("privacy/", "Privacy")])
     return f"""<!doctype html>
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
 {base}<meta name="viewport" content="width=device-width, initial-scale=1">
-{robots}<title>{html.escape(title)}</title>
+{robots}<title>{esc(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{canon}">
 <meta name="theme-color" content="#121F45">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TW Results">
 <meta property="og:locale" content="en_GB">
-<meta property="og:title" content="{html.escape(ogt)}">
+<meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
 <meta property="og:url" content="{canon}">
 <meta property="og:image" content="{SITE}/assets/og-image.png">
@@ -96,14 +113,11 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None, og_title=N
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="TW | Results. Get found on Google. Get more work.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{html.escape(ogt)}">
-<meta name="twitter:description" content="{html.escape(desc)}">
-<meta name="twitter:image" content="{SITE}/assets/og-image.png">
 <link rel="icon" href="{p}favicon.ico" sizes="32x32">
 <link rel="icon" href="{p}assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{p}assets/apple-touch-icon.png">
 <link rel="preload" href="{p}assets/fonts/arimo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="{p}assets/site.css?v=1">
+<link rel="stylesheet" href="{p}assets/site.css?v={V}">
 {sch}</head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -112,7 +126,7 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None, og_title=N
   <a class="wm" href="{p or './'}" aria-label="TW Results home">{WM}</a>
   <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   <nav class="nav" id="nav" aria-label="Main"><ul>{navli}</ul></nav>
-  <a class="btn btn-p" href="{TEL}">Call Dan</a>
+  <a class="btn" href="{TEL}">Call Dan</a>
  </div>
 </header>
 <main id="main">
@@ -123,7 +137,7 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None, og_title=N
   <div class="foot-grid">
    <div>
     <a class="wm" href="{p or './'}" aria-label="TW Results home">{WM}</a>
-    <p class="foot-tag">{SUBLINE}</p>
+    <p class="foot-tag">{TAGLINE}</p>
    </div>
    <div>
     <h2>Pages</h2>
@@ -131,9 +145,9 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None, og_title=N
    </div>
    <div>
     <h2>Get hold of Dan</h2>
-    <p>Call Dan: <a href="{TEL}">{PHONE}</a></p>
+    <p>Call: <a href="{TEL}">{PHONE}</a></p>
     <p><a href="mailto:{EMAIL}">{EMAIL}</a></p>
-    <p>Covering Derby and {TOWNS}</p>
+    <p>Local SEO and websites for trades across Derby and the East Midlands.</p>
    </div>
   </div>
   <div class="legal"><p>&copy; 2026 TW Results. Daniel Cooper trading as TW Results.</p></div>
@@ -142,267 +156,313 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None, og_title=N
 <div class="callbar on-navy"><a class="btn" href="{TEL}">Call Dan</a></div>
 <div class="cookie" id="cookie" hidden role="region" aria-label="Cookies">
  <div class="wrap"><p>Can we use analytics cookies to see how the site is used? <a href="{p}privacy/">Privacy</a></p>
- <div class="btns" style="margin:0"><button class="btn btn-p" type="button" data-consent="yes">Accept</button><button class="btn btn-s" type="button" data-consent="no">Reject</button></div></div>
+ <div class="cta" style="margin:0"><button class="btn" type="button" data-consent="yes">Accept</button><button class="btn btn-s" type="button" data-consent="no">Reject</button></div></div>
 </div>
-<script src="{p}assets/site.js?v=1" defer></script>
+<script src="{p}assets/site.js?v={V}" defer></script>
 </body>
 </html>
 """
 
-def ctas(second="Send a message", depth=1):
+def form(depth, heading_tag="h2", heading="Get a free Google check"):
     p = "../" * depth
-    return f'<div class="btns"><a class="btn btn-p" href="{TEL}">Call Dan</a><a class="btn btn-s" href="{p}contact/#message">{second}</a></div>'
+    return f"""<div class="formcard" id="check"><span class="c3"></span><span class="c4"></span>
+ <{heading_tag} class="form-h">{heading}</{heading_tag}>
+ <p class="promise">Tell us who you are. {CALLBACK}</p>
+ <form id="enquiry" action="{FORM_ENDPOINT}" method="POST" novalidate>
+  <p class="hp" aria-hidden="true"><label for="gotcha">Leave this empty</label><input id="gotcha" name="_gotcha" tabindex="-1" autocomplete="off"></p>
+  <input type="hidden" name="_subject" value="New enquiry from twresults.com">
+  <div class="f"><label for="name">Name</label><input id="name" name="name" autocomplete="name" required></div>
+  <div class="f"><label for="business">Trade or business</label><input id="business" name="business" autocomplete="organization" required placeholder="e.g. Smith Plastering, Belper"></div>
+  <div class="f"><label for="contact">Phone or email</label><input id="contact" name="contact" autocomplete="tel" required></div>
+  <div class="f"><label for="message">Message <span class="opt">(optional)</span></label><textarea id="message" name="message" rows="3"></textarea></div>
+  <label class="tick"><input type="checkbox" name="free_google_check" value="Yes" checked> Yes, I'd like a free Google check</label>
+  <button class="btn" type="submit">Send to Dan</button>
+  <p class="consent">We only use your details to reply. <a href="{p}privacy/">Privacy notice</a>.</p>
+  <p class="form-msg" id="form-msg" role="status" tabindex="-1"></p>
+ </form>
+</div>"""
 
-MAP_SVG = """<svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" aria-hidden="true" focusable="false" style="position:absolute;inset:0">
-<g fill="none" stroke="#FFFFFF" stroke-width="9"><path d="M-10 108 L140 92 L250 120 L410 84"/><path d="M90 -10 L120 160"/><path d="M300 -10 L262 160"/></g>
-<g fill="none" stroke="#FFFFFF" stroke-width="4"><path d="M-10 40 L180 52 L410 30"/><path d="M190 52 L205 160"/><path d="M350 30 L370 160"/></g>
-<g fill="none" stroke="#B4C8EA" stroke-width="1.5"><path d="M-10 75 C80 70 160 140 260 70 S380 60 410 64"/></g>
+MAP_SVG = """<svg viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" aria-hidden="true" focusable="false" style="position:absolute;inset:0">
+<g fill="none" stroke="#FFFFFF" stroke-width="9"><path d="M-10 92 L140 78 L250 102 L410 70"/><path d="M90 -10 L120 130"/><path d="M300 -10 L262 130"/></g>
+<g fill="none" stroke="#FFFFFF" stroke-width="4"><path d="M-10 34 L180 44 L410 24"/><path d="M190 44 L205 130"/><path d="M350 24 L370 130"/></g>
+<g fill="none" stroke="#B4C8EA" stroke-width="1.5"><path d="M-10 62 C80 58 160 118 260 58 S380 50 410 54"/></g>
 <g font-family="Arimo,Arial,sans-serif" font-weight="700" font-size="13">
-<g transform="translate(70 66)"><rect x="-11" y="-11" width="22" height="22" fill="#121F45"/><text x="0" y="5" fill="#FFFFFF" text-anchor="middle">A</text></g>
-<g transform="translate(232 98)"><rect x="-11" y="-11" width="22" height="22" fill="#121F45"/><text x="0" y="5" fill="#FFFFFF" text-anchor="middle">B</text></g>
-<g transform="translate(330 48)"><rect x="-11" y="-11" width="22" height="22" fill="#121F45"/><text x="0" y="5" fill="#FFFFFF" text-anchor="middle">C</text></g>
-<g transform="translate(160 124)"><rect x="-11" y="-11" width="22" height="22" fill="#FFFFFF" stroke="#121F45" stroke-width="1.5" stroke-dasharray="3 2"/><text x="0" y="5" fill="#121F45" text-anchor="middle">?</text></g>
+<g transform="translate(70 56)"><rect x="-11" y="-11" width="22" height="22" fill="#121F45"/><text x="0" y="5" fill="#FFFFFF" text-anchor="middle">1</text></g>
+<g transform="translate(232 70)"><rect x="-11" y="-11" width="22" height="22" fill="#121F45"/><text x="0" y="5" fill="#FFFFFF" text-anchor="middle">2</text></g>
+<g transform="translate(330 40)"><rect x="-11" y="-11" width="22" height="22" fill="#121F45"/><text x="0" y="5" fill="#FFFFFF" text-anchor="middle">3</text></g>
 </g></svg>"""
 
 def serp():
-    rows = ""
-    for n, name in [("1", "Competitor A"), ("2", "Competitor B"), ("3", "Competitor C")]:
-        rows += f'<li><span class="n">{n}</span><span><span class="nm">{name}</span><span class="bar"></span><span class="bar s"></span></span><span class="call">Call</span></li>'
-    rows += '<li class="you"><span class="n">4</span><span><span class="nm">You?</span><span class="bar s"></span></span><span class="call">No call</span></li>'
-    return f"""<figure class="serp-fig" style="margin:0">
- <div class="serp" role="img" aria-label="A mock Google Maps result for a trade near me. Three competitors fill the top three places. Your business is fourth, out of sight.">
-  <div class="serp-q"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke="#121F45" stroke-width="2"/><path d="M11.6 11.6 L16 16" stroke="#121F45" stroke-width="2"/></svg><span><span id="trade">plasterer</span> near me</span></div>
+    rows = "".join(f'<li><span class="n">{n}</span><span><span class="nm">{nm}</span><span class="bar"></span><span class="bar s"></span></span><span class="call">Call</span></li>'
+                   for n, nm in [("1", "Competitor"), ("2", "Competitor"), ("3", "Competitor")])
+    return f"""<figure style="margin:0">
+ <div class="serp" role="img" aria-label="A mock Google Maps result for a trade near me in Derby. Three competitors fill the top three places. Your business is on page 2.">
+  <div class="serp-q"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke="#121F45" stroke-width="2"/><path d="M11.6 11.6 L16 16" stroke="#121F45" stroke-width="2"/></svg><span><span id="trade">plasterer</span> near me, Derby</span></div>
   <div class="serp-map">{MAP_SVG}</div>
   <ol>{rows}</ol>
+  <span class="gap">4 to 20: other businesses</span>
+  <p class="page2">Page 2</p>
+  <div class="you"><span class="n">21</span><span><span class="nm">You</span><span class="bar s"></span></span><span class="call">No call</span></div>
  </div>
  <figcaption class="serp-note">Illustration. Most people ring one of the first three.</figcaption>
 </figure>"""
 
-def faq_html():
-    return "".join(f"<details><summary>{html.escape(q)}</summary><p>{ph_text(a)}</p></details>" for q, a in FAQ)
+def shot(date):
+    return (f'<figure style="margin:0"><div class="photo wide"><b>[CASE STUDY SCREENSHOT {date}]</b>'
+            f'<span>Google Maps results for &lsquo;embroidery Derby&rsquo;, private browser, dated</span></div>'
+            f'<figcaption class="cap">&lsquo;embroidery Derby&rsquo;, Google Maps, checked {date}.</figcaption></figure>')
 
-def faq_schema():
-    return {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQ]}
+def headshot(note="Dan outdoors in Derby, daylight, shoulders up. 4:5, 1200 x 1500px WebP"):
+    return f'<figure class="photo"><b>[HEADSHOT]</b><span>{note}</span></figure>'
 
 SERVICES = [
-    ("Get you found on Google Maps and in search.", "We set up and look after your Google listing, help you get more reviews, post every week and get you listed on the other directories that matter."),
-    ("Fix your website so it brings in calls.", "Clear wording, a fast site, pages for your services and towns, and a call button on every page."),
-    ("A simple website if you haven't got one.", "A Facebook page isn't enough. We build a straightforward site that does the job."),
+    ("google-maps", "Google Maps and local SEO", "Your Google Business Profile set up properly, weekly posts, more reviews and matching directory listings."),
+    ("website-fixes", "Website fixes", "Clear wording, a fast site and a call button on every page, whoever built it."),
+    ("new-websites", "New websites for trades", "A simple, fast site in your name, if you haven't got one."),
 ]
-JOBS = [
-    ("Day 1", "We check where you show up today and who's ahead of you. You get a straight answer."),
-    ("Week 1", "Your Google listing and website basics get sorted."),
-    ("Monthly", "Weekly posts, photos, review replies, a check on where you rank and a one-page report so you can see it for yourself."),
+STEPS = [
+    ("Free Google check", "We look at where you show up and who&rsquo;s ahead of you. You get a straight answer."),
+    ("We fix it", "Your Google profile, website and directory details, sorted."),
+    ("Monthly report", "One page: what we did and where you rank."),
 ]
-TRADES = ["Plumbers", "Electricians", "Builders", "Plasterers", "Roofers", "Joiners and carpenters", "Heating engineers", "Painters and decorators", "Landscapers", "Tilers", "Kitchen and bathroom fitters", "Locksmiths"]
-
-def rows_html(items):
-    return '<ol class="rows">' + "".join(f'<li><span class="num" aria-hidden="true">{i}</span><h3>{h}</h3><p>{t}</p></li>' for i, (h, t) in enumerate(items, 1)) + "</ol>"
-
-def sheet_html():
-    lis = "".join(f'<li><span class="when">{w}</span><p>{t}</p></li>' for w, t in JOBS)
-    return f'<div class="sheet"><div class="sheet-head"><span>Job sheet: how it works</span><span>TW | Results</span></div><ol>{lis}</ol><div class="sheet-foot">You answer the phone. We do the rest.</div></div>'
-
-def ledger(num, label, inner, cls="sec"):
-    return f'<section class="{cls}"><div class="wrap"><div class="ledger"><p class="tag"><b>{num}</b>{label}</p><div>{inner}</div></div></div></section>'
-
-def ee_shot(date, depth=1):
-    return f'<figure style="margin:0"><div class="ph-box shot">[EE SCREENSHOT {date}]<br>Google Maps results for &lsquo;embroidery Derby&rsquo;, dated</div><figcaption class="cap">Google Maps results for &lsquo;embroidery Derby&rsquo;, checked {date}.</figcaption></figure>'
 
 # ---------------- Home ----------------
+towns_li = "".join(f"<li>{t}</li>" for t in TOWNS)
 home = f"""
 <section class="hero" aria-labelledby="h1">
- <div class="wrap"><div class="card"><span class="c3"></span><span class="c4"></span>
-  <div class="hero-grid">
-   <div>
-    <h1 id="h1"><span>The top 3 on Google get over half the clicks.</span> <span>For your trade, in your area, that's your competitors.</span> <span class="fix">We fix that.</span></h1>
-    <p class="sub">{SUBLINE}</p>
-    {ctas(depth=0).replace('../','')}
-    <p class="src">Source: Backlinko, 2025</p>
-   </div>
-   {serp()}
+ <div class="wrap"><div class="hero-grid">
+  <div>
+   <h1 id="h1">{TAGLINE}</h1>
+   <p class="kw">Local SEO, Google Maps and websites for trades in Derby and the East Midlands.</p>
+   <p class="stat">{esc(LOCKED)}<cite>Source: Backlinko, 2025 (share of clicks in Google search)</cite></p>
+   <div class="cta"><a class="btn" href="{TEL}">Call Dan</a><a class="tel" href="{TEL}">{PHONE}</a></div>
+  </div>
+  {form(0)}
+ </div></div>
+</section>
+
+<section class="sec" aria-labelledby="h-problem">
+ <div class="wrap"><div class="split mid">
+  <div>
+   <h2 id="h-problem">Three names. One phone call.</h2>
+   <p class="lede">Customers ring one of the first three. If you&rsquo;re on page 2, the work goes to someone else.</p>
+  </div>
+  {serp()}
+ </div></div>
+</section>
+
+<section class="sec pale" aria-labelledby="h-services">
+ <div class="wrap">
+  <h2 id="h-services">Local SEO and websites for Derby trades</h2>
+  <ul class="rows">{"".join(f'<li><h3>{h}</h3><p>{t}</p><a class="link" href="what-we-do/#{a}">More<span class="vh"> about {h.lower()}</span></a></li>' for a, h, t in SERVICES)}</ul>
+ </div>
+</section>
+
+<section class="sec navy on-navy" aria-labelledby="h-results">
+ <div class="wrap"><div class="split">
+  <div>
+   <p class="big" aria-hidden="true">#2</p>
+   <h2 id="h-results">On Google Maps for &lsquo;embroidery Derby&rsquo;</h2>
+   <p>Case study: Eaton Embroidery, a Derby embroidery business.</p>
+   <dl class="dates"><div><dt>10/09/2026</dt><dd>#2</dd></div><div><dt>07/10/2026</dt><dd>Still #2</dd></div></dl>
+   <p style="margin-top:2rem"><a class="link" href="results/">See the case study</a></p>
+  </div>
+  <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
+ </div></div>
+</section>
+
+<section class="sec" aria-labelledby="h-dan">
+ <div class="wrap"><div class="person">
+  {headshot()}
+  <div>
+   <h2 id="h-dan">You deal with Dan</h2>
+   <p class="lede">I&rsquo;m Dan Cooper. I help trades across Derby who are good at the job but hard to find on Google.</p>
+   <p>No account managers, no call centre. If something won&rsquo;t help, I&rsquo;ll tell you before you spend anything.</p>
+   <p><a class="link" href="about-dan/">About Dan</a></p>
   </div>
  </div></div>
 </section>
-{ledger("01", "The problem", '<h2>Three names. One phone call.</h2><p class="statement">When someone needs a plasterer, they search, they look at the first three names, and they ring one. If you&rsquo;re not in those three, you don&rsquo;t get the call. It doesn&rsquo;t matter how good your work is.</p>')}
-{ledger("02", "What we do", '<h2>Three things. Done properly.</h2>' + rows_html(SERVICES) + '<a class="more" href="what-we-do/">What we do, in full</a>', cls="sec pale")}
-{ledger("03", "Who it&rsquo;s for", '<h2>Built for trades who are good at the job but hard to find.</h2><p class="lede">If you&rsquo;re a plumber, electrician or builder in Derby or anywhere in the East Midlands, and the work comes from word of mouth while the firm down the road gets the Google calls, this is for you.</p><ul class="trades">' + "".join(f"<li>{t}</li>" for t in TRADES) + '</ul>')}
-{ledger("04", "How it works", '<h2>No mystery. Here&rsquo;s the job sheet.</h2>' + sheet_html(), cls="sec pale")}
-<section class="sec navy on-navy" aria-labelledby="proof-h">
- <div class="wrap"><div class="ledger"><p class="tag"><b>05</b>Proof</p><div>
-  <h2 id="proof-h">Proof, with dates.</h2>
-  <div class="proof-grid">
-   <div>
-    <p class="big" aria-hidden="true">#2</p>
-    <dl class="dates"><div><dt>Started tracking</dt><dd>10/09/2026: #2</dd></div><div><dt>Checked</dt><dd>07/10/2026: still #2</dd></div></dl>
-    <p style="margin-top:1.5rem">We started with a business in our own group. Eaton Embroidery ranks #2 in the Google map results for &lsquo;Embroidery Derby&rsquo;. It was #2 when we started tracking on 10/09/2026 and still #2 on 07/10/2026. We&rsquo;re documenting the work as we go.</p>
-    <a class="more" href="eaton-embroidery/">Read the case study</a>
-   </div>
-   {ee_shot("07/10/2026")}
-  </div>
- </div></div></div>
+
+<section class="sec pale" aria-labelledby="h-steps">
+ <div class="wrap">
+  <h2 id="h-steps">How it works</h2>
+  <ol class="steps">{"".join(f"<li><h3>{h}</h3><p>{t}</p></li>" for h, t in STEPS)}</ol>
+ </div>
 </section>
-{ledger("06", "Who you deal with", '<div class="person"><div class="ph-box head-ph">[HEADSHOT]<br>Dan, plain wall or outdoors</div><div><h2>No account managers. No call centre.</h2><p class="lede">You deal with me, Dan. No account managers, no call centre. If something won&rsquo;t work for your business, I&rsquo;ll tell you before you spend anything.</p><a class="more" href="about-dan/">About Dan</a></div></div>', cls="sec pale")}
-{ledger("07", "Straight answers", '<h2>Questions trades ask us.</h2><div class="faq">' + faq_html() + '</div>')}
-<section class="sec navy on-navy close" aria-labelledby="close-h">
- <div class="wrap"><h2 id="close-h">{CLOSE}</h2><p class="lede">Call Dan for a straight answer on where you stand on Google today.</p>{ctas(depth=0).replace('../','')}</div>
+
+<section class="sec" aria-labelledby="h-faq">
+ <div class="wrap"><div class="split">
+  <h2 id="h-faq">Local SEO questions</h2>
+  {faq_html()}
+ </div></div>
+</section>
+
+<section class="sec pale" aria-labelledby="h-areas">
+ <div class="wrap"><div class="split">
+  <h2 id="h-areas">Areas we cover</h2>
+  <div>
+   <ul class="towns">{towns_li}</ul>
+   <p class="small">And the rest of the East Midlands. {TOWNS_DRAFT}</p>
+   <div class="cta"><a class="btn" href="#check">Get a free Google check</a></div>
+  </div>
+ </div></div>
 </section>
 """
 
 # ---------------- What we do ----------------
-svc_detail = [
-    ("Get you found on Google Maps and in search.",
-     "When someone types &lsquo;electrician near me&rsquo; or &lsquo;builder Derby&rsquo;, Google shows a map and three businesses. This is the work that gets you into that spot and keeps you there. It&rsquo;s what agencies call local SEO and Google Business Profile optimisation. We just call it getting you found.",
-     ["Your Google listing set up properly: the right categories, services, service area, hours and photos", "Help getting more reviews from real customers, and replies to the ones you get", "A post on your listing every week", "Your business listed, with the same details, on the other directories that matter", "A check on where you rank, every month"],
-     "Answer a few questions at the start, send us photos of your work when you have them, and ask happy customers for a review."),
-    ("Fix your website so it brings in calls.",
-     "Plenty of trade websites look fine but don&rsquo;t make the phone ring. They&rsquo;re slow, they don&rsquo;t say what you do or where, and the number&rsquo;s hard to find. We fix that, whoever built it.",
-     ["Clear wording that says what you do and where you work", "A fast site that works on a phone", "Pages for your services and the towns you cover, so Google can match you to those searches", "A call button on every page", "The behind-the-scenes basics Google looks for"],
-     "Tell us what work you want more of, and check the wording before it goes live."),
-    ("A simple website if you haven&rsquo;t got one.",
-     "A Facebook page isn&rsquo;t enough. Google needs a proper website to send people to, and customers want to see you&rsquo;re a real business. We build a straightforward site that does the job.",
-     ["A clean, fast website for your trade, built to be found on Google", "Your services, the areas you cover, photos of your work and a call button", "A contact form that comes straight to your email", "Set up in your name, so you own it"],
-     "Send us your logo if you have one, some photos and a list of your services."),
+SVC_DETAIL = [
+    ("google-maps", "Google Maps and local SEO in Derby",
+     "Get into the top three on Google Maps when people near you search for your trade.",
+     ["Your Google Business Profile set up properly: categories, services, area, hours, photos", "A post on your profile every week", "More reviews from real customers, and replies to every one", "Matching details on the directories that matter", "Where you rank, checked every month"],
+     "Send photos of your work and ask happy customers for a review."),
+    ("website-fixes", "Website fixes that bring in calls",
+     "Plenty of trade websites look fine but don&rsquo;t make the phone ring. We fix that, whoever built yours.",
+     ["Clear wording: what you do and where", "A fast site that works on a phone", "Pages for your services and towns", "A call button on every page"],
+     "Tell us the work you want more of, and check the wording."),
+    ("new-websites", "New websites for trades",
+     "No website, or just a Facebook page? We build a simple, fast site that Google can send people to.",
+     ["Your services, areas and photos of your work", "A contact form straight to your email", "Built to be found on Google", "Set up in your name, so you own it"],
+     "Send your logo, a few photos and a list of services."),
 ]
-def svc_section(i, h, intro, gets, you):
+def svc(a, h, intro, gets, you):
     lis = "".join(f"<li>{g}</li>" for g in gets)
-    return ledger(f"0{i}", "Service", f'<h2>{h}</h2><p class="lede">{intro}</p><h3 style="font-size:1.15rem;margin:2rem 0 .75rem">What you get</h3><ul class="plain">{lis}</ul><h3 style="font-size:1.15rem;margin:1.75rem 0 .75rem">What you do</h3><p>{you} That&rsquo;s it.</p>', cls="sec pale" if i % 2 == 0 else "sec")
+    return (f'<section class="svc" id="{a}" aria-labelledby="h-{a}"><div class="split">'
+            f'<div><h2 id="h-{a}">{h}</h2><p class="lede">{intro}</p></div>'
+            f'<div><h3 style="margin-bottom:1rem">What you get</h3><ul class="plain">{lis}</ul>'
+            f'<p style="margin-top:1.5rem"><b>What you do:</b> {you}</p></div></div></section>')
 
+WWD_CRUMBS = [("", "Home"), ("what-we-do/", "What we do")]
 wwd = f"""
-<section class="hero page-hero"><div class="wrap"><div class="card"><span class="c3"></span><span class="c4"></span>
- <h1>What we do</h1>
- <p class="lede">Three things. Done properly. Explained in plain English.</p>
- <p>We work with plumbers, electricians, builders and other trades in Derby and across the East Midlands. We start by looking at where you stand, then tell you straight what&rsquo;s worth doing.</p>
-</div></div></section>
-{"".join(svc_section(i, *s) for i, s in enumerate(svc_detail, 1))}
-{ledger("04", "How it works", '<h2>The job sheet.</h2>' + sheet_html(), cls="sec pale")}
-<section class="sec navy on-navy close"><div class="wrap"><h2>Want to know where you stand? Call Dan.</h2>{ctas()}</div></section>
+<section class="page-hero"><div class="wrap">
+ {crumbs_html(WWD_CRUMBS, 1)}
+ <h1>Local SEO and websites for trades in Derby</h1>
+ <p class="lede">Three services. Plain English. We start with a free Google check and tell you what&rsquo;s worth doing.</p>
+</div></section>
+<div class="wrap">{"".join(svc(*s) for s in SVC_DETAIL)}</div>
+<section class="band navy on-navy"><div class="wrap"><h2>Want to know where you stand?</h2><a class="btn" href="../contact/#check">Get a free Google check</a></div></section>
 """
 
-# ---------------- Eaton Embroidery ----------------
-ee = f"""
-<section class="hero page-hero"><div class="wrap"><div class="card"><span class="c3"></span><span class="c4"></span>
- <h1>Eaton Embroidery: our first case study</h1>
- <p class="lede">Eaton Embroidery is a Derby embroidery business in the same group as TW Results. It&rsquo;s our first case study, and we&rsquo;re documenting it as we go, with dates, good or bad.</p>
+# ---------------- Results (case study) ----------------
+RES_CRUMBS = [("", "Home"), ("results/", "Results")]
+results = f"""
+<section class="page-hero"><div class="wrap">
+ {crumbs_html(RES_CRUMBS, 1)}
+ <h1>Local SEO case study: embroidery in Derby</h1>
+ <p class="lede">Eaton Embroidery is a Derby embroidery business and our first case study client. We log the results with dates, good or bad.</p>
+</div></section>
+<section class="sec navy on-navy" aria-labelledby="h-fact"><div class="wrap"><div class="split">
+ <div><p class="big" aria-hidden="true">#2</p><h2 id="h-fact">On Google Maps for &lsquo;embroidery Derby&rsquo;</h2>
+  <dl class="dates"><div><dt>10/09/2026 (start)</dt><dd>#2</dd></div><div><dt>07/10/2026</dt><dd>Still #2</dd></div></dl>
+  <p style="margin-top:1.5rem">A top-three spot, held. Checked in a private browser.</p></div>
+ <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
 </div></div></section>
-<section class="sec navy on-navy"><div class="wrap"><div class="ledger"><p class="tag"><b>01</b>The fact</p><div><h2 class="vh">The fact</h2>
- <div class="proof-grid"><div>
-  <p class="big" aria-hidden="true">#2</p>
-  <p class="big-cap">#2 in the Google map results for &lsquo;Embroidery Derby&rsquo;.</p>
-  <dl class="dates"><div><dt>Baseline</dt><dd>10/09/2026: #2</dd></div><div><dt>Checked</dt><dd>07/10/2026: still #2</dd></div></dl>
- </div><div><p class="lede">#2 in the Google map results for &lsquo;Embroidery Derby&rsquo;. Baseline 10/09/2026: #2. Checked 07/10/2026: still #2.</p><p>That&rsquo;s a position held, not a climb. Holding a top-three spot matters: it&rsquo;s where the calls come from. The job now is to keep it and to win more searches.</p></div></div>
-</div></div></div></section>
-{ledger("02", "Screenshots", '<h2>See it for yourself.</h2><p>Dated screenshots of the Google Maps results, taken on the days we checked.</p><div class="shots">' + ee_shot("10/09/2026") + ee_shot("07/10/2026") + '</div>')}
-{ledger("03", "What we&rsquo;re working on", '<h2>The monthly work.</h2><ul class="plain"><li>Keeping the Google listing complete and up to date</li><li>A post on the listing every week</li><li>New photos of finished work</li><li>Replies to every review</li><li>Website fixes so the pages match what people search for</li><li>A monthly check on where the business ranks</li></ul>', cls="sec pale")}
-{ledger("04", "Updates", '<h2>The log.</h2><p>New results get added here every month, good or bad.</p><ol class="log"><li><time datetime="2026-09-10">10/09/2026</time><p>Started tracking. #2 in the Google map results for &lsquo;Embroidery Derby&rsquo;.</p></li><li><time datetime="2026-10-07">07/10/2026</time><p>Checked again. Still #2 for &lsquo;Embroidery Derby&rsquo;.</p></li></ol>')}
-<section class="sec navy on-navy close"><div class="wrap"><h2>{CLOSE}</h2>{ctas()}</div></section>
+<section class="sec" aria-labelledby="h-work"><div class="wrap"><div class="split">
+ <h2 id="h-work">The monthly work</h2>
+ <ul class="plain"><li>Google Business Profile kept complete</li><li>A post every week</li><li>New photos of finished work</li><li>A reply to every review</li><li>Website fixes to match what people search for</li></ul>
+</div></div></section>
+<section class="sec pale" aria-labelledby="h-log"><div class="wrap"><div class="split">
+ <h2 id="h-log">Results log</h2>
+ <ol class="log"><li><time datetime="2026-09-10">10/09/2026</time><p>Tracking starts. #2 for &lsquo;embroidery Derby&rsquo;.</p></li><li><time datetime="2026-10-07">07/10/2026</time><p>Still #2 for &lsquo;embroidery Derby&rsquo;.</p></li></ol>
+</div></div></section>
+<section class="band navy on-navy"><div class="wrap"><h2>Where do you rank?</h2><a class="btn" href="../contact/#check">Get a free Google check</a></div></section>
 """
 
 # ---------------- About Dan ----------------
+ABOUT_CRUMBS = [("", "Home"), ("about-dan/", "About Dan")]
 about = f"""
-<section class="hero page-hero"><div class="wrap"><div class="card"><span class="c3"></span><span class="c4"></span>
- <div class="person about">
-  <div class="ph-box head-ph">[HEADSHOT]<br>One photo of Dan. Plain wall or outdoors.</div>
+<section class="page-hero"><div class="wrap">
+ {crumbs_html(ABOUT_CRUMBS, 1)}
+ <div class="person">
+  {headshot()}
   <div>
-   <h1>About Dan</h1>
-   <p class="lede">I&rsquo;m Dan Cooper. I run TW Results from Derby. I work with trade businesses that are good at the job but hard to find on Google. I keep it simple: find out what&rsquo;s wrong, fix it, show you the result.</p>
+   <h1>Dan Cooper, local SEO for Derby trades</h1>
+   <p class="lede">I run TW Results from Derby. I work with trades who are good at the job but hard to find on Google.</p>
+   <p>I keep it simple: find what&rsquo;s wrong, fix it, show you the result every month. No account managers, no call centre.</p>
    <p><span class="ph">[DAN TO ADD 1 TO 2 LINES OF REAL BACKGROUND]</span></p>
-   <p class="sig">Dan Cooper, TW Results</p>
-   {ctas()}
+   <div class="cta"><a class="btn" href="{TEL}">Call Dan</a><a class="link" href="../contact/#check">Get a free Google check</a></div>
   </div>
  </div>
-</div></div></section>
-{ledger("01", "How I work", '<h2>You deal with me. Every time.</h2><ul class="plain"><li>No account managers, no call centre.</li><li>If something won&rsquo;t work for your business, I&rsquo;ll tell you before you spend anything.</li><li>Every month you see what I did and where you stand, good or bad.</li></ul>')}
+</div></section>
 """
 
 # ---------------- Contact ----------------
+CON_CRUMBS = [("", "Home"), ("contact/", "Contact")]
 contact = f"""
-<section class="hero page-hero"><div class="wrap"><div class="card"><span class="c3"></span><span class="c4"></span>
- <div class="contact-grid">
+<section class="page-hero"><div class="wrap">
+ {crumbs_html(CON_CRUMBS, 1)}
+ <div class="hero-grid">
   <div>
-   <h1>Call Dan</h1>
+   <h1>Free Google check for Derby trades</h1>
+   <p class="lede">Send the form or call. {CALLBACK}</p>
    <a class="phone-big" href="{TEL}">{PHONE}</a>
-   <p><a href="mailto:{EMAIL}" style="font-weight:700;font-size:1.2rem">{EMAIL}</a></p>
    <dl class="facts">
-    <div><dt>Covering</dt><dd>Covering Derby and {TOWNS}.</dd></div>
-    <div><dt>Meetings</dt><dd>By appointment. <span class="ph">[ADDRESS: Chellaston, Derby, by appointment, awaiting approval]</span></dd></div>
-    <div><dt>Who you&rsquo;ll speak to</dt><dd>Dan. Every time.</dd></div>
+    <div><dt>Email</dt><dd><a href="mailto:{EMAIL}">{EMAIL}</a></dd></div>
+    <div><dt>Meetings</dt><dd>{ADDRESS}</dd></div>
+    <div><dt>Covering</dt><dd>Derby and the East Midlands</dd></div>
    </dl>
   </div>
-  <div id="message">
-   <h2 style="font-size:clamp(1.5rem,2.6vw,2.1rem)">{CLOSE}</h2>
-   <p>Send a message and Dan will get back to you.</p>
-   <form id="enquiry" action="[FORM ENDPOINT]" method="POST" novalidate>
-    <p class="hp" aria-hidden="true"><label for="website">Leave this empty</label><input id="website" name="website" tabindex="-1" autocomplete="off"></p>
-    <input type="hidden" name="_subject" value="New enquiry from twresults.com">
-    <div class="f"><label for="name">Name</label><input id="name" name="name" autocomplete="name" required></div>
-    <div class="f"><label for="business">Business and trade</label><input id="business" name="business" autocomplete="organization" required placeholder="e.g. Smith Plastering, plasterer"></div>
-    <div class="f"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
-    <div class="f"><label for="town">Town</label><input id="town" name="town" autocomplete="address-level2" required></div>
-    <div class="f"><label for="problem">What&rsquo;s not working? <span class="opt">(optional)</span></label><textarea id="problem" name="problem"></textarea></div>
-    <p class="consent">By sending this you agree we can use these details to reply to you. See our <a href="../privacy/">privacy notice</a>.</p>
-    <button class="btn btn-p" type="submit">Send to Dan</button>
-    <p class="form-msg" id="form-msg" role="status" tabindex="-1"></p>
-   </form>
-  </div>
+  {form(1)}
  </div>
-</div></div></section>
+</div></section>
 """
 
 # ---------------- Privacy ----------------
 privacy = f"""
+<section class="page-hero"><div class="wrap">
+ <h1>Privacy</h1>
+ <p class="lede">What we collect, why, and how to get it deleted.</p>
+</div></section>
 <section class="sec"><div class="wrap"><div class="prose">
- <h1 style="font-size:clamp(2.2rem,4vw,3.2rem);margin-bottom:1rem">Privacy</h1>
- <p class="lede">Plain English: what we collect, why, and how to get it deleted.</p>
  <p><span class="ph">[DRAFT: Dan to approve]</span> Last updated <span class="ph">[DATE OF APPROVAL]</span>.</p>
  <h2>Who we are</h2><p>TW Results is run by Daniel Cooper, trading as TW Results, based in Derby. Email: <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
- <h2>What the contact form collects</h2><p>Your name, your business and trade, your phone number, your town and anything you write in the message box. We use it only to reply to you and, if you become a client, to do the work you&rsquo;ve asked for. We don&rsquo;t sell it or pass it on for marketing.</p>
- <h2>Who processes it</h2><p>The form is sent through <span class="ph">[FORM SERVICE: Formspree or Web3Forms]</span>, which passes it to our email. Our email runs on Google Workspace.</p>
- <h2>Analytics</h2><p>If you click Accept on the cookie bar, we use Google Analytics 4 to see how many people visit and which pages they use. It doesn&rsquo;t load unless you accept. If you click Reject, nothing is set. You can change your mind by clearing this site&rsquo;s data in your browser.</p>
- <h2>How long we keep it</h2><p>Enquiries that don&rsquo;t turn into work are deleted after <span class="ph">[RETENTION PERIOD: Dan to confirm]</span>. Client records are kept for as long as the law requires for tax and accounts.</p>
- <h2>Your rights</h2><p>You can ask to see the details we hold about you, ask us to correct them or ask us to delete them. Email <a href="mailto:{EMAIL}">{EMAIL}</a>. If you&rsquo;re unhappy with how we&rsquo;ve handled your data, you can complain to the Information Commissioner&rsquo;s Office at <a href="https://ico.org.uk">ico.org.uk</a>.</p>
+ <h2>What the form collects</h2><p>Your name, trade or business, phone number or email, your message and whether you want a free Google check. We use it only to reply and, if you become a client, to do the work. We don&rsquo;t sell it or pass it on.</p>
+ <h2>Who processes it</h2><p>The form is sent through Formspree, which passes it to our email. Our email runs on Google Workspace.</p>
+ <h2>Analytics</h2><p>If you click Accept on the cookie bar, we use Google Analytics 4 to count visits. It doesn&rsquo;t load unless you accept.</p>
+ <h2>How long we keep it</h2><p>Enquiries that don&rsquo;t turn into work are deleted after <span class="ph">[RETENTION PERIOD: Dan to confirm]</span>. Client records are kept as long as the law requires for tax and accounts.</p>
+ <h2>Your rights</h2><p>You can ask to see, correct or delete your details. Email <a href="mailto:{EMAIL}">{EMAIL}</a>. You can also complain to the Information Commissioner&rsquo;s Office at <a href="https://ico.org.uk">ico.org.uk</a>.</p>
 </div></div></section>
 """
 
 notfound = f"""
-<section class="hero page-hero"><div class="wrap"><div class="card"><span class="c3"></span><span class="c4"></span>
+<section class="page-hero"><div class="wrap">
  <h1>That page doesn&rsquo;t exist.</h1>
  <p class="lede">It may have moved, or the link was wrong.</p>
- <div class="btns"><a class="btn btn-p" href="{TEL}">Call Dan</a><a class="btn btn-s" href="./">Go to the home page</a></div>
-</div></div></section>
+ <div class="cta"><a class="btn" href="./">Go to the home page</a><a class="link" href="contact/#check">Get a free Google check</a></div>
+</div></section>
 """
 
+ORG = org_schema()
 PAGES = [
-    ("", "index.html", 0, "Get found on Google. Get more work. | TW Results, Derby",
-     "Plumbers, electricians, builders and other trades in Derby and the East Midlands: we get you found on Google Maps and in search, and build websites that bring in calls. Talk to Dan.",
-     home, [org_schema(), faq_schema()], None),
-    ("what-we-do/", "what-we-do/index.html", 1, "Google Maps, local SEO and websites for trades | TW Results, Derby",
-     "Local SEO and Google Business Profile work for tradespeople in Derby and the East Midlands, plus website fixes and simple websites that bring in calls. Plain English, no jargon.",
-     wwd, [org_schema()], "what-we-do/"),
-    ("eaton-embroidery/", "eaton-embroidery/index.html", 1, "Eaton Embroidery case study: #2 on Google Maps in Derby | TW Results",
-     "Our first case study: Eaton Embroidery, #2 in the Google map results for 'Embroidery Derby' on 10/09/2026 and still #2 on 07/10/2026. Documented as we go.",
-     ee, None, "eaton-embroidery/"),
-    ("about-dan/", "about-dan/index.html", 1, "About Dan Cooper | TW Results, Derby",
-     "Dan Cooper runs TW Results from Derby, helping trade businesses that are good at the job but hard to find on Google. You deal with Dan, every time.",
-     about, None, "about-dan/"),
-    ("contact/", "contact/index.html", 1, "Call Dan | TW Results, Derby",
-     "Call Dan or send a message. TW Results helps trades across Derby and the East Midlands get found on Google and get more work.",
-     contact, None, "contact/"),
+    ("", "index.html", 0, "Local SEO for Trades in Derby | TW Results",
+     "Get found on Google. Get more work. Local SEO, Google Maps and websites for trades in Derby and the East Midlands. Free Google check.",
+     home, [ORG, faq_schema()], None),
+    ("what-we-do/", "what-we-do/index.html", 1, "Local SEO & Websites for Trades, Derby | TW Results",
+     "Google Business Profile and local SEO, website fixes and new websites for tradespeople in Derby and the East Midlands. Plain English.",
+     wwd, [ORG, crumbs_schema(WWD_CRUMBS)], "what-we-do/"),
+    ("results/", "results/index.html", 1, "Local SEO Case Study, Derby | TW Results",
+     "Case study: Eaton Embroidery, a Derby embroidery business, #2 on Google Maps for 'embroidery Derby' on 10/09/2026 and 07/10/2026.",
+     results, [ORG, crumbs_schema(RES_CRUMBS)], "results/"),
+    ("about-dan/", "about-dan/index.html", 1, "About Dan Cooper, Local SEO Derby | TW Results",
+     "Dan Cooper runs TW Results from Derby, helping trades get found on Google. No account managers: you deal with Dan, every time.",
+     about, [ORG, crumbs_schema(ABOUT_CRUMBS), {"@context": "https://schema.org", "@type": "Person", "@id": SITE + "/about-dan/#dan", "name": "Dan Cooper", "jobTitle": "Founder", "worksFor": {"@id": SITE + "/#business"}, "email": EMAIL}], "about-dan/"),
+    ("contact/", "contact/index.html", 1, "Free Google Check for Trades, Derby | TW Results",
+     "Ask for a free Google check. Trades in Derby and the East Midlands: send the form or call Dan. We'll call you back within one working day.",
+     contact, [ORG, crumbs_schema(CON_CRUMBS)], "contact/"),
     ("privacy/", "privacy/index.html", 1, "Privacy | TW Results",
-     "How TW Results handles the details you send through the contact form, and how analytics cookies are used.",
+     "How TW Results handles the details you send through the enquiry form, and how analytics cookies are used.",
      privacy, None, None),
     ("404.html", "404.html", 0, "Page not found | TW Results",
-     "That page doesn't exist. Go to the TW Results home page or call Dan.", notfound, None, None),
+     "That page doesn't exist. Go to the TW Results home page or ask for a free Google check.", notfound, None, None),
 ]
 
 for slug, out, depth, title, desc, body, schema, cur in PAGES:
     if depth == 1:
-        body = body.replace('href="what-we-do/"', 'href="../what-we-do/"').replace('href="eaton-embroidery/"', 'href="../eaton-embroidery/"').replace('href="about-dan/"', 'href="../about-dan/"')
+        for u, _ in NAV:
+            body = body.replace(f'href="{u}', f'href="../{u}')
     path = os.path.join(ROOT, out)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
-        f.write(page(slug, title, desc, body, schema, depth, cur, og_title=(SUBLINE + " | TW Results") if slug == "" else None))
+        f.write(page(slug, title, desc, body, schema, depth, cur))
 
 with open(os.path.join(ROOT, "robots.txt"), "w") as f:
     if LIVE:

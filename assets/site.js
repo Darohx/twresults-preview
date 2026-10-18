@@ -22,14 +22,17 @@
     setInterval(function () { i = (i + 1) % trades.length; t.textContent = trades[i]; }, 2600);
   }
 
-  // Contact form: send in the background, show a thank-you on the page
+  // Enquiry form (Formspree): send in the background, show a thank-you on the page
   var form = document.getElementById("enquiry");
   if (form) {
+    form.setAttribute("novalidate", "");
     var msg = document.getElementById("form-msg");
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var show = function (text) { msg.textContent = text; msg.classList.add("show"); msg.focus(); };
-      if (form.website && form.website.value) { return; } // honeypot filled: quietly ignore
+      var hp = form.querySelector("[name=_gotcha]"); if (hp && hp.value) { return; } // spam trap filled: quietly ignore
+      var missing = [].filter.call(form.querySelectorAll("[required]"), function (el) { return !el.value.trim(); });
+      if (missing.length) { show("Please fill in your name, your trade or business, and a phone number or email."); missing[0].focus(); return; }
       var action = form.getAttribute("action") || "";
       if (action.indexOf("[") !== -1) {
         show("Preview only: the form isn't connected yet. Please email dan@twresults.com for now.");
@@ -40,7 +43,7 @@
         .then(function (r) {
           if (!r.ok) throw new Error();
           form.reset();
-          show("Thanks, that's come through to Dan. He'll get back to you.");
+          show("Thanks, that's come through to Dan. We'll call you back within one working day.");
         })
         .catch(function () { show("Sorry, that didn't send. Please email dan@twresults.com instead."); })
         .then(function () { b.disabled = false; b.textContent = "Send to Dan"; });
