@@ -18,7 +18,7 @@
   // Hero: cycle the trade in the mock search (skipped if the visitor prefers reduced motion)
   var t = document.getElementById("trade");
   if (t && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    var trades = ["plasterer", "plumber", "electrician", "builder", "roofer", "joiner", "landscaper"], i = 0;
+    var trades = ["barber", "plumber", "hairdresser", "electrician", "beauty salon", "roofer", "builder"], i = 0;
     setInterval(function () { i = (i + 1) % trades.length; t.textContent = trades[i]; }, 2600);
   }
 
@@ -43,7 +43,7 @@
         .then(function (r) {
           if (!r.ok) throw new Error();
           form.reset();
-          show("Thanks, that's come through to Dan. We'll call you back within one working day.");
+          show("Thanks, that's come through. I'll run your free Google check and call you back within one working day. Dan");
         })
         .catch(function () { show("Sorry, that didn't send. Please email dan@twresults.com instead."); })
         .then(function () { b.disabled = false; b.textContent = "Send to Dan"; });

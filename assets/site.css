@@ -1,6 +1,6 @@
 /* TW Results v2 site styles. Brand: navy #121F45, pale #F1F3F6, near-black #111111, white #FFFFFF, ice #B4C8EA (accent), grey #555B66 (small print, AA). One typeface: Arimo (Arial Bold look). */
 @font-face{font-family:"Arimo";src:url("fonts/arimo-var-latin.woff2") format("woff2");font-weight:400 700;font-style:normal;font-display:swap}
-:root{--navy:#121F45;--pale:#F1F3F6;--ink:#111111;--white:#FFFFFF;--ice:#B4C8EA;--grey:#555B66;--line:rgba(18,31,69,.18);--wrap:1240px;--gut:clamp(20px,5vw,64px);--sec:clamp(72px,10vw,144px)}
+:root{--navy:#121F45;--pale:#F1F3F6;--ink:#111111;--white:#FFFFFF;--ice:#B4C8EA;--grey:#555B66;--line:rgba(18,31,69,.18);--wrap:1240px;--gut:clamp(20px,5vw,64px);--sec:clamp(72px,7vw,104px)}
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:24px}
 body{margin:0;font-family:"Arimo",Arial,"Helvetica Neue",Helvetica,sans-serif;font-size:1.125rem;line-height:1.6;color:var(--ink);background:var(--white);font-kerning:normal;text-rendering:optimizeLegibility}
@@ -62,8 +62,11 @@ p{margin:0 0 1em;max-width:60ch}
 .split.mid{align-items:center}
 
 /* hero */
-.hero{background:var(--pale);padding:clamp(56px,8vw,112px) 0 clamp(64px,9vw,128px)}
-.hero-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(40px,6vw,104px);align-items:center}
+.hero{background:var(--pale);padding:clamp(40px,5vw,72px) 0 clamp(64px,6vw,88px)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:clamp(40px,5vw,80px);align-items:center}
+.alt{margin:1.5rem 0 0;font-size:1rem}
+.proof{font-size:.9375rem;color:var(--ice);border-left:2px solid var(--ice);padding-left:.9rem;margin:1.5rem 0 0;max-width:46ch}
+#enquiry{scroll-margin-top:140px}
 .hero .kw{font-size:clamp(1.2rem,1.8vw,1.45rem);line-height:1.4;font-weight:700;color:var(--navy);margin:1.75rem 0 0;max-width:30ch}
 .stat{margin:2.25rem 0 0;padding-top:1.25rem;border-top:1px solid var(--line);max-width:44ch;font-size:1rem;line-height:1.5}
 .stat cite{display:block;font-style:normal;font-size:.8125rem;color:var(--grey);margin-top:.4rem}
@@ -71,13 +74,14 @@ p{margin:0 0 1em;max-width:60ch}
 .cta .tel{font-weight:700;color:var(--ink);text-decoration:none}
 
 /* enquiry form: the business card (corner marks) */
-.formcard{position:relative;background:var(--white);padding:clamp(28px,3.5vw,44px)}
+.formcard{position:relative;background:var(--white);padding:clamp(28px,3.5vw,52px);border:1px solid var(--navy);border-top:6px solid var(--navy)}
+@media (min-width:961px){.formcard .f-row{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}}
 .formcard::before,.formcard::after,.formcard>.c3,.formcard>.c4{content:"";position:absolute;width:22px;height:22px;border:0 solid var(--navy);pointer-events:none}
 .formcard::before{top:-10px;left:-10px;border-top-width:2px;border-left-width:2px}
 .formcard::after{top:-10px;right:-10px;border-top-width:2px;border-right-width:2px}
 .formcard>.c3{bottom:-10px;left:-10px;border-bottom-width:2px;border-left-width:2px}
 .formcard>.c4{bottom:-10px;right:-10px;border-bottom-width:2px;border-right-width:2px}
-.formcard h2{font-size:clamp(1.6rem,2.4vw,2rem);margin-bottom:.5rem;max-width:none}
+.formcard h2{font-size:clamp(1.75rem,2.6vw,2.4rem);margin-bottom:.5rem;max-width:none}
 .formcard .promise{font-size:1rem;margin-bottom:1.5rem}
 .f{margin-bottom:1rem}
 .f label{display:block;font-weight:700;font-size:.9375rem;margin-bottom:.35rem;color:var(--ink)}
@@ -156,7 +160,7 @@ p{margin:0 0 1em;max-width:60ch}
 .crumbs ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.5rem}
 .crumbs li+li::before{content:"/";margin-right:.5rem}
 .crumbs a{color:var(--grey)}
-.page-hero{background:var(--pale);padding:clamp(48px,7vw,96px) 0 clamp(56px,8vw,112px)}
+.page-hero{background:var(--pale);padding:clamp(40px,5vw,72px) 0 clamp(56px,6vw,88px)}
 .page-hero h1{max-width:16ch}
 .page-hero .lede{margin-top:1.5rem}
 .svc{padding:clamp(48px,6vw,80px) 0;border-bottom:1px solid var(--line)}
