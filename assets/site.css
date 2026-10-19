@@ -301,3 +301,4 @@ p{margin:0 0 1em;max-width:60ch}
 .towns-h{font-size:1.25rem;color:var(--white);margin:2.5rem 0 .75rem}
 .page-hero .towns li{border-color:var(--ice);color:var(--white)}
 .cookie .cta{flex-wrap:nowrap;gap:8px}.cookie .cta .btn{margin:0}
+.dan-line{padding:clamp(28px,4vw,48px) 0;border-bottom:1px solid var(--line)}.dan-line p{margin:0;font-size:clamp(1.25rem,2.2vw,1.75rem);font-weight:700;color:var(--navy);letter-spacing:-.02em;line-height:1.3}

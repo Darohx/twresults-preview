@@ -5,7 +5,7 @@ Static HTML/CSS with a little JavaScript. No framework, no third-party calls exc
 ## Pages
 `/` Home · `/what-we-do/` · `/results/` (Eaton Embroidery client case study) · `/about-dan/` · `/contact/` · `/privacy/` · `404.html`
 
-v8 (19/10/2026, Arno checklist fixes 1–3): final "Get a free Google check" band is the last section on every page (contact ends with the form); footer is one legal line (trader name, [ADDRESS], email, Privacy); cookie bar pads the page so it never covers the CTA or form; no nav on the home header; "See the results" moved below the form; home FAQ trimmed to 4 (the other 3 are on What we do with their own FAQ schema); town list moved to Contact (`towns_li()` still links town pages when published); tighter service tiles.
+v8 (19/10/2026, Arno checklist fixes 1–3): home "You deal with me, Dan" section cut to one line under the Results band ("You deal with me, Dan, from the first chat to every monthly report."), headshot placeholder off the home page (About Dan unchanged); final "Get a free Google check" band is the last section on every page (contact ends with the form); footer is one legal line (trader name, [ADDRESS], email, Privacy); cookie bar pads the page so it never covers the CTA or form; no nav on the home header; "See the results" moved below the form; home FAQ trimmed to 4 (the other 3 are on What we do with their own FAQ schema); town list moved to Contact (`towns_li()` still links town pages when published); tighter service tiles.
 
 v7b (19/10/2026): problem section H2 is now "Not in the top 3? Your competitors are getting your calls." with "Your competitors aren’t better than you. They’re just easier to find." under it.
 

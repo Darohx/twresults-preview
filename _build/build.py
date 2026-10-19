@@ -10,7 +10,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://twresults.com"
 LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
-V = "8"  # asset cache-buster
+V = "9"  # asset cache-buster
 
 # PHONE FLAG: leave PHONE_DISPLAY = None until the giffgaff number is live. [TWR PHONE: giffgaff number to come]
 # Set both, e.g. PHONE_DISPLAY = "07xxx xxxxxx" and PHONE_E164 = "+447xxxxxxxxx" (NEVER 07944 915880),
@@ -303,17 +303,7 @@ home = f"""
  </div></div>
 </section>
 
-<section class="sec" aria-labelledby="h-dan">
- <div class="wrap"><div class="person">
-  {headshot()}
-  <div>
-   <h2 id="h-dan">You deal with me, Dan</h2>
-   <p class="lede">I&rsquo;m Dan Cooper. I help trades and local businesses, in Derby and further afield, that are good at what they do but hard to find on Google.</p>
-   <p>No account managers, no call centre. If I don&rsquo;t think something will help your business, I&rsquo;ll tell you up front, before you spend a penny on it.</p>
-   <p><a class="link" href="about-dan/">About me</a></p>
-  </div>
- </div></div>
-</section>
+<section class="dan-line" aria-label="Who you deal with"><div class="wrap"><p>You deal with me, Dan, from the first chat to every monthly report.</p></div></section>
 
 <section class="sec pale" aria-labelledby="h-steps">
  <div class="wrap">
