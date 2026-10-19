@@ -151,7 +151,7 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None):
 <main id="main">
 {body}
 </main>
-<footer class="legal-bar"><div class="wrap"><p>&copy; 2026 Daniel Cooper trading as TW Results, {ADDRESS}. <a href="mailto:{EMAIL}">{EMAIL}</a> &middot; <a href="{p}privacy/">Privacy</a></p></div></footer>
+<footer class="legal-bar"><div class="wrap"><p>&copy; 2026 TW Results, {ADDRESS}. <a href="mailto:{EMAIL}">{EMAIL}</a> &middot; <a href="{p}privacy/">Privacy</a></p></div></footer>
 <div class="callbar on-navy">{bar_btn}</div>
 <div class="cookie" id="cookie" hidden role="region" aria-label="Cookies">
  <div class="wrap"><p>Can we use analytics cookies to see how the site is used? <a href="{p}privacy/">Privacy</a></p>
