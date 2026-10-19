@@ -286,3 +286,5 @@ p{margin:0 0 1em;max-width:60ch}
 .page-hero .bigstats{margin-bottom:0}
 .page-hero .phone-big{color:var(--white)}
 .foot{border-top:4px solid var(--ice)}
+.problem .sub{font-size:clamp(1.15rem,1.6vw,1.35rem);line-height:1.4;color:var(--navy);margin:1rem 0 0;max-width:36ch}
+.problem h2{max-width:16ch}

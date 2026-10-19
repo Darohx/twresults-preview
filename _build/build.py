@@ -279,7 +279,8 @@ home = f"""
 <section class="sec problem" aria-labelledby="h-problem">
  <div class="wrap"><div class="split mid">
   <div>
-   <h2 id="h-problem">Page 2 gets almost nothing.</h2>
+   <h2 id="h-problem">Not in the top 3? Your competitors are getting your calls.</h2>
+   <p class="sub">Your competitors aren&rsquo;t better than you. They&rsquo;re just easier to find.</p>
    <p class="lede">{STAT_LINE}</p>
    <p class="small">Source: {CITE}. Organic search results.</p>
   </div>

@@ -5,6 +5,8 @@ Static HTML/CSS with a little JavaScript. No framework, no third-party calls exc
 ## Pages
 `/` Home · `/what-we-do/` · `/results/` (Eaton Embroidery client case study) · `/about-dan/` · `/contact/` · `/privacy/` · `404.html`
 
+v7b (19/10/2026): problem section H2 is now "Not in the top 3? Your competitors are getting your calls." with "Your competitors aren’t better than you. They’re just easier to find." under it.
+
 v7 (19/10/2026, approved by Dan): navy page-top bands with big white H1s on every page, home order hero > problem + diagram > form, big #2 / 80% / 10 stats on home and Results, calls line "Clicks are calls" with the Backlinko source.
 
 v6 (18/10/2026): Dan's final copy: line above the form, enquiry figures "reported by the business owner", new guarantee and contract FAQ answers (contract no longer draft), exclusivity ("One business per trade, per [AREA]") in the FAQ and How it works, location wording is now "Derby, the East Midlands and UK-wide", trader name and [ADDRESS] only in the footer legal line and privacy page.
