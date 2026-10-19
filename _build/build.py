@@ -10,7 +10,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://twresults.com"
 LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
-V = "7"  # asset cache-buster
+V = "8"  # asset cache-buster
 
 # PHONE FLAG: leave PHONE_DISPLAY = None until the giffgaff number is live. [TWR PHONE: giffgaff number to come]
 # Set both, e.g. PHONE_DISPLAY = "07xxx xxxxxx" and PHONE_E164 = "+447xxxxxxxxx" (NEVER 07944 915880),
@@ -81,15 +81,17 @@ FAQ = [
     ("How long does it take?", "It depends on your trade, your town and who you're up against. You'll see your position in a report every month."),
     ("Do I get tied into a contract?", "There's a 3-month minimum, then it's month to month. Google rewards businesses that stay active and up to date: regular posts, new reviews and accurate details. It takes weeks for changes to show up in the rankings, so 3 months gives the work a fair chance to show results."),
     ("Will you work with my competitors?", EXCL),
-    ("I already have a website. Can you work with it?", "Yes, in most cases, whoever built it."),
-    ("I only have a Facebook page.", "Then you need a simple website. I build those, set up in your name."),
     ("Who do I actually talk to?", "Me, Dan. Every time."),
 ]
-def faq_html():
-    return '<div class="faq">' + "".join(f"<details><summary>{esc(q)}</summary><p>{ph_text(a)}</p></details>" for q, a in FAQ) + "</div>"
-def faq_schema():
+FAQ_WWD = [FAQ.pop(1)] + [
+    ("I already have a website. Can you work with it?", "Yes, in most cases, whoever built it."),
+    ("I only have a Facebook page.", "Then you need a simple website. I build those, set up in your name."),
+]
+def faq_html(items=None):
+    return '<div class="faq">' + "".join(f"<details><summary>{esc(q)}</summary><p>{ph_text(a)}</p></details>" for q, a in (items or FAQ)) + "</div>"
+def faq_schema(items=None):
     return {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQ]}
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in (items or FAQ)]}
 
 # ---------------- shared pieces ----------------
 def page(slug, title, desc, body, schema=None, depth=1, current=None):
@@ -107,8 +109,10 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None):
     form_href = "#enquiry" if (slug in ("", "contact/") or slug.startswith("areas/")) else p + "contact/#enquiry"
     head_btn = f'<a class="btn" href="{TEL}">Call Dan</a>' if HAS_PHONE else f'<a class="btn" href="{form_href}">Free Google check</a>'
     bar_btn = f'<a class="btn" href="{TEL}">Call Dan</a>' if HAS_PHONE else f'<a class="btn" href="{form_href}">Get a free Google check</a>'
-    foot_phone = f'<p>Call: <a href="{TEL}">{PHONE}</a></p>' if HAS_PHONE else ""
-    foot_links = "".join('<li><a href="%s%s">%s</a></li>' % (p, u, t) for u, t in [("", "Home")] + NAV + [("privacy/", "Privacy")])
+    nav_html = "" if slug == "" else f'<button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>\n  <nav class="nav" id="nav" aria-label="Main"><ul>{navli}</ul></nav>'
+    tail = body.rstrip()[-600:]
+    if slug != "contact/" and 'class="band' not in tail:
+        body += f'\n<section class="band navy on-navy final-cta"><div class="wrap"><div><h2>Where do you rank?</h2><p>Free Google check. {CALLBACK}</p></div><a class="btn" href="{form_href}">Get a free Google check</a></div></section>\n'
     return f"""<!doctype html>
 <html lang="en-GB">
 <head>
@@ -140,35 +144,14 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None):
 <header class="top">
  <div class="wrap">
   <a class="wm" href="{p or './'}" aria-label="TW Results home">{WM}</a>
-  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
-  <nav class="nav" id="nav" aria-label="Main"><ul>{navli}</ul></nav>
+  {nav_html}
   {head_btn}
  </div>
 </header>
 <main id="main">
 {body}
 </main>
-<footer class="foot on-navy">
- <div class="wrap">
-  <div class="foot-grid">
-   <div>
-    <a class="wm" href="{p or './'}" aria-label="TW Results home">{WM}</a>
-    <p class="foot-tag">{TAGLINE}</p>
-   </div>
-   <div>
-    <h2>Pages</h2>
-    <ul>{foot_links}</ul>
-   </div>
-   <div>
-    <h2>Get hold of Dan</h2>
-    {foot_phone}
-    <p><a href="mailto:{EMAIL}">{EMAIL}</a></p>
-    <p>Local SEO and websites for trades and local businesses. {REACH_LINE}</p>
-   </div>
-  </div>
-  <div class="legal"><p>&copy; 2026 TW Results. Daniel Cooper trading as TW Results, {ADDRESS}.</p></div>
- </div>
-</footer>
+<footer class="legal-bar"><div class="wrap"><p>&copy; 2026 Daniel Cooper trading as TW Results, {ADDRESS}. <a href="mailto:{EMAIL}">{EMAIL}</a> &middot; <a href="{p}privacy/">Privacy</a></p></div></footer>
 <div class="callbar on-navy">{bar_btn}</div>
 <div class="cookie" id="cookie" hidden role="region" aria-label="Cookies">
  <div class="wrap"><p>Can we use analytics cookies to see how the site is used? <a href="{p}privacy/">Privacy</a></p>
@@ -223,9 +206,9 @@ def headshot(note="Dan outdoors in Derby, daylight, shoulders up. 4:5, 1200 x 15
     return f'<figure class="photo"><b>[HEADSHOT]</b><span>{note}</span></figure>'
 
 SERVICES = [
-    ("google-maps", "Google Maps and local SEO", "Your Google Business Profile set up properly, weekly posts, more reviews and matching directory listings."),
-    ("website-fixes", "Website fixes", "Clear wording, a fast site and a call button on every page, whoever built it."),
-    ("new-websites", "New websites", "A simple, fast site in your name, if you haven't got one."),
+    ("google-maps", "Google Maps and local SEO", "Your Google profile set up properly, with posts, reviews and listings."),
+    ("website-fixes", "Website fixes", "Clear wording, a fast site, a call button on every page."),
+    ("new-websites", "New websites", "A simple, fast site in your name."),
 ]
 STEPS = [
     ("Free Google check", "I check where you show up and who&rsquo;s ahead of you. You get a straight answer."),
@@ -245,7 +228,8 @@ AREA_PAGES = [
 ]
 def area_url(a): return f"areas/{a['slug']}/"
 AREA_LINKS = {a["name"]: area_url(a) for a in AREA_PAGES}
-towns_li = "".join(f'<li><a href="{AREA_LINKS[t]}">{t}</a></li>' if t in AREA_LINKS else f"<li>{t}</li>" for t in TOWNS)
+def towns_li(p=""):
+    return "".join(f'<li><a href="{p}{AREA_LINKS[t]}">{t}</a></li>' if t in AREA_LINKS else f"<li>{t}</li>" for t in TOWNS)
 CITE = f'<a href="{BACKLINKO_URL}" rel="noopener">Backlinko organic click-through rate study</a>, updated 16/04/2025'
 EE_WORK = "I built an optimised website, set up and optimised the Google Business Profile, and handled reviews, posts and citations."
 EE_START = "Brand-new business, launched July 2026, went from page 2&ndash;3 of Google to #2 on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks."
@@ -272,7 +256,7 @@ home = f"""
   <p class="kw">Local SEO, Google Maps and websites for trades and local businesses in {REACH}.</p>
   <div class="cta"><a class="btn btn-w" href="#enquiry">Get a free Google check</a>{f'<a class="tel" href="{TEL}">Call Dan: {PHONE}</a>' if HAS_PHONE else ""}</div>
  </div>
- <a class="hero-proof" href="results/"><span class="n" aria-hidden="true">#2</span><span class="t">on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks. A Derby client.</span><span class="link">See the results</span></a>
+ <div class="hero-proof"><span class="n" aria-hidden="true">#2</span><span class="t">on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks. A Derby client.</span></div>
  </div>
 </section>
 
@@ -292,13 +276,15 @@ home = f"""
  <div class="wrap narrow">
   {form(0)}
   <p class="alt">Prefer email? <a href="mailto:{EMAIL}">{EMAIL}</a></p>
+  <p class="alt"><a class="link" href="results/">See the results</a></p>
  </div>
 </section>
 
-<section class="sec pale" aria-labelledby="h-services">
+<section class="sec svc-tight" aria-labelledby="h-services">
  <div class="wrap">
   <h2 id="h-services">Local SEO and websites for trades and local businesses</h2>
-  <ul class="rows">{"".join(f'<li><h3>{h}</h3><p>{t}</p><a class="link" href="what-we-do/#{a}">More<span class="vh"> about {h.lower()}</span></a></li>' for a, h, t in SERVICES)}</ul>
+  <ul class="tiles">{"".join(f'<li><h3>{h}</h3><p>{t}</p></li>' for a, h, t in SERVICES)}</ul>
+  <p><a class="link" href="what-we-do/">What I do</a></p>
  </div>
 </section>
 
@@ -344,17 +330,6 @@ home = f"""
  </div></div>
 </section>
 
-<section class="sec pale" aria-labelledby="h-areas">
- <div class="wrap"><div class="split">
-  <h2 id="h-areas">Areas I cover</h2>
-  <div>
-   <p class="lede">{REACH_LINE}</p>
-   <ul class="towns">{towns_li}</ul>
-   <p class="small">Towns around Derby I cover in person. {TOWNS_DRAFT}</p>
-   <div class="cta"><a class="btn" href="#enquiry">Get a free Google check</a></div>
-  </div>
- </div></div>
-</section>
 """
 
 # ---------------- What we do ----------------
@@ -387,6 +362,10 @@ wwd = f"""
  <p class="lede">Three services, in plain English. I start with a free Google check and tell you what&rsquo;s worth doing.</p>
 </div></section>
 <div class="wrap">{"".join(svc(*s) for s in SVC_DETAIL)}</div>
+<section class="sec pale" aria-labelledby="h-faq"><div class="wrap"><div class="split">
+ <h2 id="h-faq">More questions</h2>
+ {faq_html(FAQ_WWD)}
+</div></div></section>
 <section class="band navy on-navy"><div class="wrap"><h2>Want to know where you stand?</h2><a class="btn" href="../contact/#enquiry">Get a free Google check</a></div></section>
 """
 
@@ -450,6 +429,10 @@ contact = f"""
     <div><dt>Meetings</dt><dd>In Derby, by appointment</dd></div>
     <div><dt>Covering</dt><dd>{REACH}</dd></div>
    </dl>
+   <h2 class="towns-h" id="areas">Areas I cover</h2>
+   <p>{REACH_LINE}</p>
+   <ul class="towns">{towns_li("../")}</ul>
+   <p class="small">Towns around Derby I cover in person. {TOWNS_DRAFT}</p>
   </div>
   <div>{form(1)}</div>
  </div>
@@ -519,7 +502,7 @@ PAGES = [
      home, [ORG, faq_schema()], None),
     ("what-we-do/", "what-we-do/index.html", 1, "Local SEO & Websites, Derby | TW Results",
      "Google Business Profile and local SEO, website fixes and new websites for trades and local businesses in Derby, the East Midlands and UK-wide.",
-     wwd, [ORG, crumbs_schema(WWD_CRUMBS)], "what-we-do/"),
+     wwd, [ORG, crumbs_schema(WWD_CRUMBS), faq_schema(FAQ_WWD)], "what-we-do/"),
     ("results/", "results/index.html", 1, "Local SEO Case Study, Derby | TW Results",
      "Case study: a new Derby embroidery business, launched July 2026, went from page 2–3 of Google to #2 on Google Maps for 'embroidery Derby' in a few weeks.",
      results, [ORG, crumbs_schema(RES_CRUMBS)], "results/"),

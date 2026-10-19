@@ -288,3 +288,15 @@ p{margin:0 0 1em;max-width:60ch}
 .foot{border-top:4px solid var(--ice)}
 .problem .sub{font-size:clamp(1.15rem,1.6vw,1.35rem);line-height:1.4;color:var(--navy);margin:1rem 0 0;max-width:36ch}
 .problem h2{max-width:16ch}
+/* v8: final CTA last, slim legal line, compact cookie bar */
+.legal-bar{background:var(--white);border-top:1px solid var(--line);padding:16px 0;font-size:.8125rem;color:var(--grey)}
+.legal-bar p{margin:0}.legal-bar a{color:var(--grey)}.legal-bar .ph{font-weight:400}
+.final-cta p{margin:.6rem 0 0;color:var(--ice)}
+.cookie{padding:10px 0}.cookie p{font-size:.875rem}.cookie .btn{min-height:38px}
+@media (max-width:760px){body{padding-bottom:74px}.cookie .wrap{flex-wrap:nowrap;gap:10px}.cookie p{font-size:.8125rem}}
+.tiles{list-style:none;margin:2rem 0 1.5rem;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,3vw,40px)}
+.tiles li{border-top:2px solid var(--navy);padding-top:1rem}
+.tiles h3{font-size:1.25rem;margin-bottom:.5rem}.tiles p{margin:0}
+@media (max-width:760px){.tiles{grid-template-columns:1fr}}
+.towns-h{font-size:1.25rem;color:var(--white);margin:2.5rem 0 .75rem}
+.page-hero .towns li{border-color:var(--ice);color:var(--white)}

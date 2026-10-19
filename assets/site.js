@@ -67,10 +67,16 @@
       var bar = document.getElementById("cookie");
       if (bar) {
         bar.hidden = false;
+        // Keep the bar from covering the final CTA or the form: pad the page by the bar's height while it shows.
+        var pad = function () {
+          var base = window.matchMedia("(max-width:760px)").matches ? 74 : 0;
+          document.body.style.paddingBottom = bar.hidden ? "" : (bar.getBoundingClientRect().height + base) + "px";
+        };
+        pad(); window.addEventListener("resize", pad);
         bar.addEventListener("click", function (e) {
           var v = e.target.getAttribute("data-consent"); if (!v) return;
           try { localStorage.setItem(KEY, v); } catch (err) {}
-          bar.hidden = true; if (v === "yes") loadGA();
+          bar.hidden = true; pad(); if (v === "yes") loadGA();
         });
       }
     }
