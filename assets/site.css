@@ -300,3 +300,4 @@ p{margin:0 0 1em;max-width:60ch}
 @media (max-width:760px){.tiles{grid-template-columns:1fr}}
 .towns-h{font-size:1.25rem;color:var(--white);margin:2.5rem 0 .75rem}
 .page-hero .towns li{border-color:var(--ice);color:var(--white)}
+.cookie .cta{flex-wrap:nowrap;gap:8px}.cookie .cta .btn{margin:0}
