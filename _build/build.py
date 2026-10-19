@@ -260,31 +260,38 @@ def ee_result():
 def call_cta(extra=""):
     return f'<div class="cta"><a class="btn" href="{TEL}">Call Dan</a><a class="tel" href="{TEL}">{PHONE}</a>{extra}</div>' if HAS_PHONE else (f'<div class="cta">{extra}</div>' if extra else "")
 
+STAT_LINE = "The top 3 on Google get over half the clicks. Clicks are calls. In your area, those calls go to your competitors."
+def big_stats():
+    items = [("#2", "on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks"), *EE_FIGS]
+    return '<dl class="bigstats">' + "".join(f"<div><dt>{a}</dt><dd>{b}</dd></div>" for a, b in items) + "</dl>"
+
 home = f"""
-<section class="hero" aria-labelledby="h1">
- <div class="wrap"><div class="hero-grid">
+<section class="hero hero-navy on-navy" aria-labelledby="h1">
+ <div class="wrap hero-n-grid"><div>
+  <h1 id="h1">{TAGLINE}</h1>
+  <p class="kw">Local SEO, Google Maps and websites for trades and local businesses in {REACH}.</p>
+  <div class="cta"><a class="btn btn-w" href="#enquiry">Get a free Google check</a>{f'<a class="tel" href="{TEL}">Call Dan: {PHONE}</a>' if HAS_PHONE else ""}</div>
+ </div>
+ <a class="hero-proof" href="results/"><span class="n" aria-hidden="true">#2</span><span class="t">on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks. A Derby client.</span><span class="link">See the results</span></a>
+ </div>
+</section>
+
+<section class="sec problem" aria-labelledby="h-problem">
+ <div class="wrap"><div class="split mid">
   <div>
-   <h1 id="h1">{TAGLINE}</h1>
-   <p class="kw">Local SEO, Google Maps and websites for trades and local businesses in {REACH}.</p>
-   {call_cta()}
-   {serp(hero=True)}
+   <h2 id="h-problem">Page 2 gets almost nothing.</h2>
+   <p class="lede">{STAT_LINE}</p>
+   <p class="small">Source: {CITE}. Organic search results.</p>
   </div>
-  <div class="hero-side">
-   {form(0)}
-   <p class="alt">Prefer email? <a href="mailto:{EMAIL}">{EMAIL}</a></p>
-  </div>
+  {serp()}
  </div></div>
 </section>
 
-<section class="sec stat-sec" aria-labelledby="h-problem">
- <div class="wrap"><div class="split">
-  <h2 id="h-problem">Page 2 gets almost nothing.</h2>
-  <div>
-   <p class="lede">The top 3 Google search results get 54.4% of all clicks. Only 0.63% of searchers click anything on page 2.</p>
-   <p>For your trade, in your area, the top 3 is your competitors. I fix that.</p>
-   <p class="small">Source: {CITE}. Organic search results, not the map.</p>
-  </div>
- </div></div>
+<section class="sec pale form-sec" aria-label="Free Google check">
+ <div class="wrap narrow">
+  {form(0)}
+  <p class="alt">Prefer email? <a href="mailto:{EMAIL}">{EMAIL}</a></p>
+ </div>
 </section>
 
 <section class="sec pale" aria-labelledby="h-services">
@@ -295,10 +302,11 @@ home = f"""
 </section>
 
 <section class="sec navy on-navy" aria-labelledby="h-results">
- <div class="wrap"><div class="split">
+ <div class="wrap">
+  <h2 id="h-results">Results for a Derby business</h2>
+  {big_stats()}
+  <div class="split">
   <div>
-   <h2 id="h-results">Results for a Derby business</h2>
-   {ee_result()}
    <p class="lede">Eaton Embroidery, a Derby embroidery business, is a client.</p>
    <p>{EE_WORK}</p>
    <p class="small">{EE_START} {EE_DISCLOSE} {EE_CHECKS}</p>
