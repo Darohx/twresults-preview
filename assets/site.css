@@ -268,3 +268,21 @@ p{margin:0 0 1em;max-width:60ch}
 .hero-proof .n{display:block;font-size:clamp(6rem,11vw,10rem);font-weight:700;line-height:.85;letter-spacing:-.06em}
 .hero-proof .t{display:block;margin:1rem 0 1.25rem;font-size:1.0625rem;line-height:1.4;color:var(--ice)}
 @media (max-width:960px){.hero-n-grid{grid-template-columns:1fr}.hero-proof{display:none}}
+/* v7 rollout: navy page tops */
+.page-hero{background:var(--navy);color:var(--white);padding:clamp(48px,6vw,96px) 0 clamp(64px,8vw,112px)}
+.page-hero h1{color:var(--white);font-size:clamp(2.75rem,6.4vw,5.75rem);line-height:.95;letter-spacing:-.045em;max-width:15ch}
+.page-hero .lede{color:var(--ice);font-size:clamp(1.15rem,1.8vw,1.45rem);line-height:1.45;max-width:46ch}
+.page-hero .crumbs,.page-hero .crumbs a{color:var(--ice)}
+.page-hero.on-navy a:not(.btn){color:var(--white)}
+.page-hero .facts{border-top-color:rgba(180,200,234,.35)}.page-hero .facts div{border-bottom-color:rgba(180,200,234,.35)}
+.page-hero .facts dt{color:var(--ice)}.page-hero .facts dd{color:var(--white)}
+.page-hero .pre-form{color:var(--white)}
+.page-hero .plain li{border-color:rgba(180,200,234,.35)}
+.formcard{color:var(--ink)}
+.page-hero .formcard a:not(.btn){color:var(--navy)}
+.on-navy .formcard .btn{background:var(--navy);color:var(--white);border-color:var(--navy)}
+.on-navy .formcard .btn:hover{background:var(--ink);border-color:var(--ink)}
+.formcard h2,.formcard .form-h{color:var(--navy)}
+.page-hero .bigstats{margin-bottom:0}
+.page-hero .phone-big{color:var(--white)}
+.foot{border-top:4px solid var(--ice)}

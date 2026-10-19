@@ -380,7 +380,7 @@ def svc(a, h, intro, gets, you):
 
 WWD_CRUMBS = [("", "Home"), ("what-we-do/", "What we do")]
 wwd = f"""
-<section class="page-hero"><div class="wrap">
+<section class="page-hero on-navy"><div class="wrap">
  {crumbs_html(WWD_CRUMBS, 1)}
  <h1>Local SEO and websites for Derby businesses</h1>
  <p class="lede">Three services, in plain English. I start with a free Google check and tell you what&rsquo;s worth doing.</p>
@@ -392,22 +392,23 @@ wwd = f"""
 # ---------------- Results (case study) ----------------
 RES_CRUMBS = [("", "Home"), ("results/", "Results")]
 results = f"""
-<section class="page-hero"><div class="wrap">
+<section class="page-hero on-navy"><div class="wrap">
  {crumbs_html(RES_CRUMBS, 1)}
  <h1>Local SEO case study: an embroidery business in Derby</h1>
  <p class="lede">Eaton Embroidery is a Derby embroidery business and a TW Results client. I built its website and Google Business Profile and took it to #2 on Google Maps for &ldquo;embroidery Derby&rdquo; within a few weeks.</p>
+ {big_stats()}
 </div></section>
 <section class="sec" aria-labelledby="h-work"><div class="wrap"><div class="split">
  <h2 id="h-work">What I did</h2>
  <ul class="plain"><li>Built an optimised website</li><li>Set up and optimised the Google Business Profile</li><li>Reviews: every new review replied to</li><li>Regular Google posts</li><li>Citations: matching business details on directories such as Yell and Bing</li></ul>
 </div></div></section>
-<section class="sec navy on-navy" aria-labelledby="h-fact"><div class="wrap"><div class="split">
+<section class="sec pale" aria-labelledby="h-fact"><div class="wrap"><div class="split">
  <div><h2 id="h-fact">Results for a Derby business</h2>
-  {ee_result()}
-  <p class="small">{EE_START} {EE_DISCLOSE}</p></div>
+  <p class="lede">{EE_START} {EE_DISCLOSE}</p>
+  <p class="small">{EE_CHECKS}</p></div>
  <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
 </div></div></section>
-<section class="sec pale" aria-labelledby="h-log"><div class="wrap"><div class="split">
+<section class="sec" aria-labelledby="h-log"><div class="wrap"><div class="split">
  <h2 id="h-log">Results log</h2>
  <ol class="log"><li><time datetime="2026-07">July 2026</time><p>Brand-new business launched. Page 2&ndash;3 of Google for &ldquo;embroidery Derby&rdquo;.</p></li><li><time datetime="2026-09-10">10/09/2026</time><p>Checked after the work: #2 on Google Maps for &ldquo;embroidery Derby&rdquo;.</p></li><li><time datetime="2026-10-07">07/10/2026</time><p>Checked again: #2, position held.</p></li></ol>
 </div></div></section>
@@ -417,7 +418,7 @@ results = f"""
 # ---------------- About Dan ----------------
 ABOUT_CRUMBS = [("", "Home"), ("about-dan/", "About Dan")]
 about = f"""
-<section class="page-hero"><div class="wrap">
+<section class="page-hero on-navy"><div class="wrap">
  {crumbs_html(ABOUT_CRUMBS, 1)}
  <div class="person">
   {headshot()}
@@ -436,7 +437,7 @@ about = f"""
 CON_CRUMBS = [("", "Home"), ("contact/", "Contact")]
 phone_big = f'<a class="phone-big" href="{TEL}">{PHONE}</a>' if HAS_PHONE else ""
 contact = f"""
-<section class="page-hero"><div class="wrap">
+<section class="page-hero on-navy"><div class="wrap">
  {crumbs_html(CON_CRUMBS, 1)}
  <div class="hero-grid">
   <div>
@@ -449,14 +450,14 @@ contact = f"""
     <div><dt>Covering</dt><dd>{REACH}</dd></div>
    </dl>
   </div>
-  {form(1)}
+  <div>{form(1)}</div>
  </div>
 </div></section>
 """
 
 # ---------------- Privacy ----------------
 privacy = f"""
-<section class="page-hero"><div class="wrap">
+<section class="page-hero on-navy"><div class="wrap">
  <h1>Privacy</h1>
  <p class="lede">What I collect, why, and how to get it deleted.</p>
 </div></section>
@@ -472,7 +473,7 @@ privacy = f"""
 """
 
 notfound = f"""
-<section class="page-hero"><div class="wrap">
+<section class="page-hero on-navy"><div class="wrap">
  <h1>That page doesn&rsquo;t exist.</h1>
  <p class="lede">It may have moved, or the link was wrong.</p>
  <div class="cta"><a class="btn" href="./">Go to the home page</a><a class="link" href="contact/#enquiry">Get a free Google check</a></div>
@@ -487,7 +488,7 @@ def area_page(a):
     assert a.get("desc") and a.get("intro"), "each town page needs its own desc and intro"
     local = "".join(f"<li>{x}</li>" for x in a.get("local", []))
     body = f"""
-<section class="page-hero"><div class="wrap">
+<section class="page-hero on-navy"><div class="wrap">
  {crumbs_html(crumbs, 2)}
  <div class="hero-grid">
   <div>
@@ -495,7 +496,7 @@ def area_page(a):
    <p class="lede">{a["intro"]}</p>
    {f'<ul class="plain" style="margin-top:1.5rem">{local}</ul>' if local else ""}
   </div>
-  {form(2)}
+  <div>{form(2)}</div>
  </div>
 </div></section>
 <section class="sec pale" aria-labelledby="h-svc"><div class="wrap">
