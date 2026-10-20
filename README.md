@@ -5,6 +5,8 @@ Static HTML/CSS with a little JavaScript. No framework, no third-party calls exc
 ## Pages
 `/` Home · `/what-we-do/` · `/results/` (Eaton Embroidery client case study) · `/contact/` · `/privacy/` · `404.html` (the About Dan page was removed on 20/10/2026)
 
+v9b (20/10/2026): case study screenshot slots removed for launch; `CASE_STUDY_SHOTS = []` in build.py brings them back (list the dates, e.g. ["10/09/2026", "07/10/2026"]). Privacy: Formspree transfers described as relying on SCCs per formspree.io/security, with [LEGAL CHECK] note.
+
 v9 (20/10/2026, Dan's decisions): address is plain "Derby, by appointment"; exclusivity is "per town"; EE case study neutral (no disclosure placeholder, figures "reported by the business"); no visible town list (towns only in schema areaServed; location line "Derby and surrounding areas, the East Midlands and UK-wide"); About Dan page removed; HEADSHOT flag; privacy retention 12 months / GA4 14 months.
 
 v8 (19/10/2026, Arno checklist fixes 1–3): home "You deal with me, Dan" section cut to one line under the Results band ("You deal with me, Dan, from the first chat to every monthly report."), headshot placeholder off the home page (About Dan unchanged); final "Get a free Google check" band is the last section on every page (contact ends with the form); footer is one legal line (trader name, [ADDRESS], email, Privacy); cookie bar pads the page so it never covers the CTA or form; no nav on the home header; "See the results" moved below the form; home FAQ trimmed to 4 (the other 3 are on What we do with their own FAQ schema); town list moved to Contact (`towns_li()` still links town pages when published); tighter service tiles.
@@ -44,7 +46,6 @@ The preview lives at https://darohx.github.io/twresults-preview/ and must not be
 | Phone (flag) | `PHONE_DISPLAY` / `PHONE_E164` in build.py | Currently `None`, so every Call Dan button, the footer/contact number and schema `telephone` are left out, and the header/sticky buttons point to the form (`#enquiry`). Set both and rebuild: they all reappear. **Never 07944 915880.** |
 | `[FORM ENDPOINT]` | `FORM_ENDPOINT` in build.py (home + contact forms) | Formspree endpoint `https://formspree.io/f/...` |
 | Headshot (flag) | `HEADSHOT` in build.py | `None` = no photo and no placeholder. Set to an image path (e.g. `assets/dan.webp`, square, at least 192 x 192px) and rebuild: a small photo shows beside "You deal with me, Dan" on home |
-| `[CASE STUDY SCREENSHOT 10/09/2026]`, `[CASE STUDY SCREENSHOT 07/10/2026]` | home, results | Dated Google Maps screenshots for "embroidery Derby", 16:10 |
 | `[DAN TO ADD 1 TO 2 LINES OF REAL BACKGROUND]` | about | |
 | `[DRAFT: Dan to approve]`, `[DATE OF APPROVAL]`, `[ICO REG NO: pending]`, `[TRANSFER SAFEGUARD: …]` | privacy (`_build/privacy_notice.py`) | Enquiries kept 12 months, GA4 14 months (Dan's defaults, still draft) |
 | `[GA4 ID]` | `assets/site.js` | The cookie bar and GA4 stay off until this is real |

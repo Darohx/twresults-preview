@@ -10,7 +10,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://twresults.com"
 LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
-V = "11"  # asset cache-buster
+V = "12"  # asset cache-buster
 
 # PHONE FLAG: leave PHONE_DISPLAY = None until the giffgaff number is live. [TWR PHONE: giffgaff number to come]
 # Set both, e.g. PHONE_DISPLAY = "07xxx xxxxxx" and PHONE_E164 = "+447xxxxxxxxx" (NEVER 07944 915880),
@@ -202,6 +202,11 @@ def shot(date):
             f'<span>Google Maps results for &lsquo;embroidery Derby&rsquo;, private browser, dated</span></div>'
             f'<figcaption class="cap">&lsquo;embroidery Derby&rsquo;, Google Maps, checked {date}.</figcaption></figure>')
 
+# CASE STUDY SCREENSHOTS FLAG: [] = none shown (launch). Add dates to show dated Google Maps screenshot slots again,
+# e.g. CASE_STUDY_SHOTS = ["10/09/2026", "07/10/2026"] (until real images are wired in they show as placeholders).
+CASE_STUDY_SHOTS = []
+def shots_html():
+    return f'<div class="shots">{"".join(shot(d) for d in CASE_STUDY_SHOTS)}</div>' if CASE_STUDY_SHOTS else ""
 # HEADSHOT FLAG: None = no photo on the home page. Set to an image path under the site root, e.g. "assets/dan.webp",
 # and a small square photo of Dan shows beside the "You deal with me, Dan" line.
 HEADSHOT = None
@@ -301,7 +306,7 @@ home = f"""
    <p class="small">{EE_START} {EE_CHECKS}</p>
    <p style="margin-top:1.5rem"><a class="link" href="results/">See the case study</a></p>
   </div>
-  <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
+  {shots_html()}
  </div></div>
 </section>
 
@@ -378,7 +383,7 @@ results = f"""
  <div><h2 id="h-fact">Results for a Derby business</h2>
   <p class="lede">{EE_START}</p>
   <p class="small">{EE_CHECKS}</p></div>
- <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
+ {shots_html()}
 </div></div></section>
 <section class="sec" aria-labelledby="h-log"><div class="wrap"><div class="split">
  <h2 id="h-log">Results log</h2>

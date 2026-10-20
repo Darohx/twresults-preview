@@ -29,7 +29,7 @@ SECTIONS = [
     ]),
     ("Who processes it for me", [
         "These companies process data on my behalf, under their data processing terms:",
-        ["**Formspree** (handles the enquiry form and sends it to my email). Formspree is based in the United States, so your form details are transferred there. [TRANSFER SAFEGUARD: Dan to confirm the mechanism in Formspree&rsquo;s data processing agreement, e.g. the UK International Data Transfer Addendum]",
+        ["**Formspree** (handles the enquiry form and sends it to my email). Formspree is based in the United States, so your form details are transferred there. Formspree says it relies on Standard Contractual Clauses (SCCs) for these transfers. [LEGAL CHECK: transfer safeguard per Formspree DPA, checked 20/10/2026]",
          "**Google Workspace** (my email). Data may be processed outside the UK. Google uses the UK Extension to the EU-US Data Privacy Framework and standard contractual clauses.",
          "**Google Analytics 4** (visit statistics, only after you click Accept). Google Analytics 4 doesn&rsquo;t log or store IP addresses; it uses them briefly to work out a rough location and then discards them. The same Google transfer safeguards apply.",
          "**GitHub Pages** (website hosting, GitHub Inc., United States). GitHub keeps server logs, including visitors&rsquo; IP addresses, for security. GitHub uses the UK Extension to the EU-US Data Privacy Framework and standard contractual clauses."],
