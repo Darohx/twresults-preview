@@ -10,7 +10,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://twresults.com"
 LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
-V = "9"  # asset cache-buster
+V = "10"  # asset cache-buster
 
 # PHONE FLAG: leave PHONE_DISPLAY = None until the giffgaff number is live. [TWR PHONE: giffgaff number to come]
 # Set both, e.g. PHONE_DISPLAY = "07xxx xxxxxx" and PHONE_E164 = "+447xxxxxxxxx" (NEVER 07944 915880),
@@ -430,19 +430,16 @@ contact = f"""
 """
 
 # ---------------- Privacy ----------------
+import sys as _sys; _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import privacy_notice
+PRIVACY_HTML = privacy_notice.to_html('<p><button class="btn btn-s" type="button" data-cookie-reset>Change my cookie choice</button></p>')
 privacy = f"""
 <section class="page-hero on-navy"><div class="wrap">
  <h1>Privacy</h1>
  <p class="lede">What I collect, why, and how to get it deleted.</p>
 </div></section>
 <section class="sec"><div class="wrap"><div class="prose">
- <p><span class="ph">[DRAFT: Dan to approve]</span> Last updated <span class="ph">[DATE OF APPROVAL]</span>.</p>
- <h2>Who I am</h2><p>TW Results is run by Daniel Cooper, trading as TW Results. Address: {ADDRESS}. Email: <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
- <h2>What the form collects</h2><p>Your name, trade or business, phone number or email, and your message. I use it only to run your free Google check, reply to you and, if you become a client, to do the work. I don&rsquo;t sell it or pass it on.</p>
- <h2>Who processes it</h2><p>The form is sent through Formspree, which passes it to my email. My email runs on Google Workspace.</p>
- <h2>Analytics</h2><p>If you click Accept on the cookie bar, I use Google Analytics 4 to count visits. It doesn&rsquo;t load unless you accept.</p>
- <h2>How long I keep it</h2><p>Enquiries that don&rsquo;t turn into work are deleted after <span class="ph">[RETENTION PERIOD: Dan to confirm]</span>. Client records are kept as long as the law requires for tax and accounts.</p>
- <h2>Your rights</h2><p>You can ask to see, correct or delete your details. Email <a href="mailto:{EMAIL}">{EMAIL}</a>. You can also complain to the Information Commissioner&rsquo;s Office at <a href="https://ico.org.uk">ico.org.uk</a>.</p>
+ {PRIVACY_HTML}
 </div></div></section>
 """
 

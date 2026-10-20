@@ -50,6 +50,14 @@
     });
   }
 
+  // Privacy page: let the visitor change their cookie choice (clears it and shows the bar again)
+  [].forEach.call(document.querySelectorAll("[data-cookie-reset]"), function (b) {
+    b.addEventListener("click", function () {
+      try { localStorage.removeItem("twr-consent"); } catch (e) {}
+      location.reload();
+    });
+  });
+
   // Analytics: GA4 only loads after the visitor says yes
   if (GA4_ID.indexOf("[") === -1) {
     var KEY = "twr-consent", choice = null;
