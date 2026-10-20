@@ -9,7 +9,7 @@ LEDE = "This notice explains what personal data I collect through this website a
 SECTIONS = [
     ("Who I am", [
         "Daniel Cooper trading as TW Results (&ldquo;TW Results&rdquo;, &ldquo;I&rdquo;, &ldquo;me&rdquo;) is the controller of your personal data.",
-        ["Address: [ADDRESS: Derby, by appointment]",
+        ["Address: Derby, by appointment",
          f"Email: [{EMAIL}](mailto:{EMAIL})",
          "ICO registration number: [ICO REG NO: pending]"],
     ]),
@@ -35,9 +35,9 @@ SECTIONS = [
          "**GitHub Pages** (website hosting, GitHub Inc., United States). GitHub keeps server logs, including visitors&rsquo; IP addresses, for security. GitHub uses the UK Extension to the EU-US Data Privacy Framework and standard contractual clauses."],
     ]),
     ("How long I keep it", [
-        ["**Enquiries that don&rsquo;t lead to work:** [RETENTION PERIOD: Dan to confirm, suggest 12 months], then deleted.",
+        ["**Enquiries that don&rsquo;t lead to work:** 12 months, then deleted.",
          "**Client records:** 6 years from the end of the tax year they relate to, as HMRC requires.",
-         "**Analytics data:** [GA4 RETENTION: Dan to set in Google Analytics, 2 or 14 months].",
+         "**Analytics data:** 14 months.",
          "**Server logs:** kept by GitHub under its own policy."],
     ]),
     ("Cookies", [

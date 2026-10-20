@@ -10,7 +10,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://twresults.com"
 LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
-V = "10"  # asset cache-buster
+V = "11"  # asset cache-buster
 
 # PHONE FLAG: leave PHONE_DISPLAY = None until the giffgaff number is live. [TWR PHONE: giffgaff number to come]
 # Set both, e.g. PHONE_DISPLAY = "07xxx xxxxxx" and PHONE_E164 = "+447xxxxxxxxx" (NEVER 07944 915880),
@@ -21,7 +21,7 @@ HAS_PHONE = bool(PHONE_DISPLAY and PHONE_E164)
 PHONE = PHONE_DISPLAY or ""
 TEL = "tel:" + (PHONE_E164 or "")
 EMAIL = "dan@twresults.com"
-ADDRESS = '<span class="ph">[ADDRESS: Derby, by appointment]</span>'
+ADDRESS = 'Derby, by appointment'
 FORM_ENDPOINT = "[FORM ENDPOINT]"   # Formspree, e.g. https://formspree.io/f/xxxxxxx
 TAGLINE = "Get found on Google. Get more work."
 # Source checked 18/10/2026: Backlinko organic CTR study (published 27/08/2019, updated 16/04/2025):
@@ -31,12 +31,12 @@ BACKLINKO_URL = "https://backlinko.com/google-ctr-stats"
 CALLBACK = "I'll call you back within one working day."
 # DRAFT town list: must match the Google profile service area before launch
 TOWNS = ["Derby", "Chellaston", "Alvaston", "Mickleover", "Littleover", "Allestree", "Spondon", "Belper", "Ripley", "Long Eaton", "Ashby"]
-REACH = "Derby, the East Midlands and UK-wide"
-REACH_LINE = "Based in Derby. Working across the East Midlands and UK-wide."
+REACH = "Derby and surrounding areas, the East Midlands and UK-wide"
+REACH_LINE = "Based in Derby. Working across Derby and surrounding areas, the East Midlands and UK-wide."
 WIDE_AREAS = [{"@type": "AdministrativeArea", "name": "East Midlands"}, {"@type": "Country", "name": "United Kingdom"}]
 TOWNS_DRAFT = '<span class="ph">[DRAFT: town list to confirm with Dan]</span>'
 
-NAV = [("what-we-do/", "What we do"), ("results/", "Results"), ("about-dan/", "About Dan"), ("contact/", "Contact")]
+NAV = [("what-we-do/", "What we do"), ("results/", "Results"), ("contact/", "Contact")]
 WM = '<span class="tw">TW</span> <span class="rs">| Results</span>'
 
 def esc(s): return html.escape(s, quote=False)
@@ -56,7 +56,7 @@ def org_schema():
         "logo": SITE + "/assets/apple-touch-icon.png",
         "image": SITE + "/assets/og-image.png",
         "description": "Local SEO, Google Business Profile work and websites for trades and local businesses in Derby, the East Midlands and UK-wide.",
-        "founder": {"@type": "Person", "@id": SITE + "/about-dan/#dan", "name": "Dan Cooper"},
+        "founder": {"@type": "Person", "@id": SITE + "/#dan", "name": "Dan Cooper"},
         "areaServed": [{"@type": "City", "name": t} for t in TOWNS] + WIDE_AREAS,
         "knowsAbout": ["Local SEO", "Google Business Profile optimisation", "Google Maps rankings", "Websites for tradespeople"],
         "hasOfferCatalog": {"@type": "OfferCatalog", "name": "Services", "itemListElement": [
@@ -75,7 +75,7 @@ def crumbs_html(items, depth):
     lis = "".join(f'<li><a href="{p}{u}">{n}</a></li>' for u, n in items[:-1]) + f'<li aria-current="page">{items[-1][1]}</li>'
     return f'<nav class="crumbs" aria-label="Breadcrumb"><ol>{lis}</ol></nav>'
 
-EXCL = "One business per trade, per [AREA]. When we work together, I won't take on a competitor in your trade in your [AREA]."
+EXCL = "One business per trade, per town. When we work together, I won't take on a competitor in your trade in your town."
 FAQ = [
     ("Can you guarantee I'll be number one?", "No. Google decides the rankings, so anyone who guarantees you the top spot is guessing. What I can promise is the work that gives you the best chance, and a plain English report every month showing where you stand."),
     ("How long does it take?", "It depends on your trade, your town and who you're up against. You'll see your position in a report every month."),
@@ -202,6 +202,9 @@ def shot(date):
             f'<span>Google Maps results for &lsquo;embroidery Derby&rsquo;, private browser, dated</span></div>'
             f'<figcaption class="cap">&lsquo;embroidery Derby&rsquo;, Google Maps, checked {date}.</figcaption></figure>')
 
+# HEADSHOT FLAG: None = no photo on the home page. Set to an image path under the site root, e.g. "assets/dan.webp",
+# and a small square photo of Dan shows beside the "You deal with me, Dan" line.
+HEADSHOT = None
 def headshot(note="Dan outdoors in Derby, daylight, shoulders up. 4:5, 1200 x 1500px WebP"):
     return f'<figure class="photo"><b>[HEADSHOT]</b><span>{note}</span></figure>'
 
@@ -233,9 +236,8 @@ def towns_li(p=""):
 CITE = f'<a href="{BACKLINKO_URL}" rel="noopener">Backlinko organic click-through rate study</a>, updated 16/04/2025'
 EE_WORK = "I built an optimised website, set up and optimised the Google Business Profile, and handled reviews, posts and citations."
 EE_START = "Brand-new business, launched July 2026, went from page 2&ndash;3 of Google to #2 on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks."
-EE_DISCLOSE = '<span class="ph">[EE DISCLOSURE: pending Dan]</span>'
 EE_CHECKS = "Checked 10/09/2026 and 07/10/2026: #2 both times, position held."
-EE_FIGS = [("80%", "of work now inbound (reported by the business owner)"), ("10", "more enquiries a week (reported by the business owner)")]
+EE_FIGS = [("80%", "of work now inbound (reported by the business)"), ("10", "more enquiries a week (reported by the business)")]
 def ee_result():
     figs = "".join(f"<div><dt>{a}</dt><dd>{b}</dd></div>" for a, b in EE_FIGS)
     return (f'<p class="big" aria-hidden="true">#2</p>'
@@ -296,14 +298,14 @@ home = f"""
   <div>
    <p class="lede">Eaton Embroidery, a Derby embroidery business, is a client.</p>
    <p>{EE_WORK}</p>
-   <p class="small">{EE_START} {EE_DISCLOSE} {EE_CHECKS}</p>
+   <p class="small">{EE_START} {EE_CHECKS}</p>
    <p style="margin-top:1.5rem"><a class="link" href="results/">See the case study</a></p>
   </div>
   <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
  </div></div>
 </section>
 
-<section class="dan-line" aria-label="Who you deal with"><div class="wrap"><p>You deal with me, Dan, from the first chat to every monthly report.</p></div></section>
+<section class="dan-line" aria-label="Who you deal with"><div class="wrap">{f'<img class="dan-photo" src="{HEADSHOT}" alt="Dan Cooper" width="96" height="96">' if HEADSHOT else ""}<p>You deal with me, Dan, from the first chat to every monthly report.</p></div></section>
 
 <section class="sec pale" aria-labelledby="h-steps">
  <div class="wrap">
@@ -374,7 +376,7 @@ results = f"""
 </div></div></section>
 <section class="sec pale" aria-labelledby="h-fact"><div class="wrap"><div class="split">
  <div><h2 id="h-fact">Results for a Derby business</h2>
-  <p class="lede">{EE_START} {EE_DISCLOSE}</p>
+  <p class="lede">{EE_START}</p>
   <p class="small">{EE_CHECKS}</p></div>
  <div class="shots">{shot("10/09/2026")}{shot("07/10/2026")}</div>
 </div></div></section>
@@ -383,24 +385,6 @@ results = f"""
  <ol class="log"><li><time datetime="2026-07">July 2026</time><p>Brand-new business launched. Page 2&ndash;3 of Google for &ldquo;embroidery Derby&rdquo;.</p></li><li><time datetime="2026-09-10">10/09/2026</time><p>Checked after the work: #2 on Google Maps for &ldquo;embroidery Derby&rdquo;.</p></li><li><time datetime="2026-10-07">07/10/2026</time><p>Checked again: #2, position held.</p></li></ol>
 </div></div></section>
 <section class="band navy on-navy"><div class="wrap"><h2>Where do you rank?</h2><a class="btn" href="../contact/#enquiry">Get a free Google check</a></div></section>
-"""
-
-# ---------------- About Dan ----------------
-ABOUT_CRUMBS = [("", "Home"), ("about-dan/", "About Dan")]
-about = f"""
-<section class="page-hero on-navy"><div class="wrap">
- {crumbs_html(ABOUT_CRUMBS, 1)}
- <div class="person">
-  {headshot()}
-  <div>
-   <h1>Dan Cooper, local SEO in Derby</h1>
-   <p class="lede">I run TW Results from Derby and work with trades and local businesses across the East Midlands and UK-wide. They&rsquo;re good at what they do but hard to find on Google.</p>
-   <p>I keep it simple: find what&rsquo;s wrong, fix it, show you the result every month. No account managers, no call centre.</p>
-   <p><span class="ph">[DAN TO ADD 1 TO 2 LINES OF REAL BACKGROUND]</span></p>
-   {call_cta('<a class="link" href="../contact/#enquiry">Get a free Google check</a>')}
-  </div>
- </div>
-</div></section>
 """
 
 # ---------------- Contact ----------------
@@ -419,10 +403,6 @@ contact = f"""
     <div><dt>Meetings</dt><dd>In Derby, by appointment</dd></div>
     <div><dt>Covering</dt><dd>{REACH}</dd></div>
    </dl>
-   <h2 class="towns-h" id="areas">Areas I cover</h2>
-   <p>{REACH_LINE}</p>
-   <ul class="towns">{towns_li("../")}</ul>
-   <p class="small">Towns around Derby I cover in person. {TOWNS_DRAFT}</p>
   </div>
   <div>{form(1)}</div>
  </div>
@@ -493,9 +473,6 @@ PAGES = [
     ("results/", "results/index.html", 1, "Local SEO Case Study, Derby | TW Results",
      "Case study: a new Derby embroidery business, launched July 2026, went from page 2–3 of Google to #2 on Google Maps for 'embroidery Derby' in a few weeks.",
      results, [ORG, crumbs_schema(RES_CRUMBS)], "results/"),
-    ("about-dan/", "about-dan/index.html", 1, "About Dan Cooper, Local SEO Derby | TW Results",
-     "Dan Cooper runs TW Results from Derby, helping trades and local businesses get found on Google. No account managers: you deal with Dan.",
-     about, [ORG, crumbs_schema(ABOUT_CRUMBS), {"@context": "https://schema.org", "@type": "Person", "@id": SITE + "/about-dan/#dan", "name": "Dan Cooper", "jobTitle": "Founder", "worksFor": {"@id": SITE + "/#business"}, "email": EMAIL}], "about-dan/"),
     ("contact/", "contact/index.html", 1, "Free Google Check, Derby | TW Results",
      "Ask Dan for a free Google check on your Derby business. Send the form and I'll call you back within one working day.",
      contact, [ORG, crumbs_schema(CON_CRUMBS)], "contact/"),

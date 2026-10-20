@@ -3,7 +3,9 @@
 Static HTML/CSS with a little JavaScript. No framework, no third-party calls except the form service and GA4 (after consent). Font: Arimo, self-hosted (`assets/fonts`, 17 KB).
 
 ## Pages
-`/` Home · `/what-we-do/` · `/results/` (Eaton Embroidery client case study) · `/about-dan/` · `/contact/` · `/privacy/` · `404.html`
+`/` Home · `/what-we-do/` · `/results/` (Eaton Embroidery client case study) · `/contact/` · `/privacy/` · `404.html` (the About Dan page was removed on 20/10/2026)
+
+v9 (20/10/2026, Dan's decisions): address is plain "Derby, by appointment"; exclusivity is "per town"; EE case study neutral (no disclosure placeholder, figures "reported by the business"); no visible town list (towns only in schema areaServed; location line "Derby and surrounding areas, the East Midlands and UK-wide"); About Dan page removed; HEADSHOT flag; privacy retention 12 months / GA4 14 months.
 
 v8 (19/10/2026, Arno checklist fixes 1–3): home "You deal with me, Dan" section cut to one line under the Results band ("You deal with me, Dan, from the first chat to every monthly report."), headshot placeholder off the home page (About Dan unchanged); final "Get a free Google check" band is the last section on every page (contact ends with the form); footer is one legal line (trader name, [ADDRESS], email, Privacy); cookie bar pads the page so it never covers the CTA or form; no nav on the home header; "See the results" moved below the form; home FAQ trimmed to 4 (the other 3 are on What we do with their own FAQ schema); town list moved to Contact (`towns_li()` still links town pages when published); tighter service tiles.
 
@@ -41,13 +43,10 @@ The preview lives at https://darohx.github.io/twresults-preview/ and must not be
 |---|---|---|
 | Phone (flag) | `PHONE_DISPLAY` / `PHONE_E164` in build.py | Currently `None`, so every Call Dan button, the footer/contact number and schema `telephone` are left out, and the header/sticky buttons point to the form (`#enquiry`). Set both and rebuild: they all reappear. **Never 07944 915880.** |
 | `[FORM ENDPOINT]` | `FORM_ENDPOINT` in build.py (home + contact forms) | Formspree endpoint `https://formspree.io/f/...` |
-| `[ADDRESS: Derby, by appointment]` | contact | No street address. Director approval needed before any address is published |
-| `[DRAFT: town list to confirm with Dan]` | home "Areas we cover"; `TOWNS` also feeds schema `areaServed` | Must match the Google profile service area exactly |
-| `[AREA]` | Exclusivity line in How it works and the FAQ "Will you work with my competitors?" (kept literally in FAQ schema so it matches) | Dan to define the area per client (town, postcode district or radius) |
-| `[HEADSHOT]` | home, about | 4:5, 1200 x 1500px WebP, outdoors in daylight |
+| Headshot (flag) | `HEADSHOT` in build.py | `None` = no photo and no placeholder. Set to an image path (e.g. `assets/dan.webp`, square, at least 192 x 192px) and rebuild: a small photo shows beside "You deal with me, Dan" on home |
 | `[CASE STUDY SCREENSHOT 10/09/2026]`, `[CASE STUDY SCREENSHOT 07/10/2026]` | home, results | Dated Google Maps screenshots for "embroidery Derby", 16:10 |
 | `[DAN TO ADD 1 TO 2 LINES OF REAL BACKGROUND]` | about | |
-| `[DRAFT: Dan to approve]`, `[DATE OF APPROVAL]`, `[RETENTION PERIOD: Dan to confirm]` | privacy | |
+| `[DRAFT: Dan to approve]`, `[DATE OF APPROVAL]`, `[ICO REG NO: pending]`, `[TRANSFER SAFEGUARD: …]` | privacy (`_build/privacy_notice.py`) | Enquiries kept 12 months, GA4 14 months (Dan's defaults, still draft) |
 | `[GA4 ID]` | `assets/site.js` | The cookie bar and GA4 stay off until this is real |
 
 Acceptance checks are in `/home/box/business/TWR/Website/TWR_Website_Rebuild_Brief.md` section 8.
@@ -64,3 +63,6 @@ To add one:
 3. Run `python3 _build/build.py` (preview) or `--live`. The page is created, added to `sitemap.xml` automatically, and if `name` matches a town in `TOWNS`, that town in the home page's "Areas I cover" list becomes a link to it.
 
 Positioning: Derby-first SEO (home title, Derby in the H1 support line, the towns in `areaServed`), plus `REACH` = "Derby, the East Midlands and UK-wide" and `REACH_LINE` ("Based in Derby. Working across the East Midlands and UK-wide.") used in the support line, footer, areas section and contact page. `areaServed` also lists East Midlands (AdministrativeArea) and United Kingdom (Country).
+
+
+Town list: not shown on any page since v9. The towns live only in `TOWNS` (schema `areaServed`). If town pages are published later, `towns_li("../")` renders a linked list again; add it to the Contact page at the same time.
