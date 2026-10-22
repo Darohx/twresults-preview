@@ -15,7 +15,7 @@ SECTIONS = [
     ]),
     ("What I collect", [
         ["**The enquiry form:** your name, your trade or business, your phone number or email address, and your message (optional).",
-         "**If you email or phone me:** your contact details and whatever you tell me.",
+         "If you contact me, I only keep your details and message so I can reply to you.",
          "**If you become a client:** the details I need to do the work and invoice you.",
          "**Analytics:** how the site is used (pages visited, rough location, device type), but only if you click Accept on the cookie bar. See Cookies below.",
          "**Website hosting:** the host keeps server logs, which include your IP address, when you visit."],
@@ -86,7 +86,7 @@ def _sections(ico):
         out.append((h, nb))
     return out
 
-def to_html(cookie_button, ico=None):
+def to_html(cookie_button, ico="pending"):
     out = [f'<p>{_inline_html(INTRO)}</p>', f'<p class="lede">{LEDE}</p>']
     for h, blocks in _sections(ico):
         out.append(f"<h2>{h}</h2>")
@@ -99,7 +99,7 @@ def to_html(cookie_button, ico=None):
                 out.append(f"<p>{_inline_html(b)}</p>")
     return "\n ".join(out)
 
-def to_markdown(ico=None):
+def to_markdown(ico="pending"):
     def md(t):
         t = _h.unescape(re.sub(r"</?code>", "`", t))
         return t
