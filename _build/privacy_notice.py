@@ -11,7 +11,7 @@ SECTIONS = [
         "Daniel Cooper trading as TW Results (&ldquo;TW Results&rdquo;, &ldquo;I&rdquo;, &ldquo;me&rdquo;) is the controller of your personal data.",
         ["Address: Derby, by appointment",
          f"Email: [{EMAIL}](mailto:{EMAIL})",
-         "ICO registration number: [ICO REG NO: pending]"],
+         "{ICO_LINE}"],
     ]),
     ("What I collect", [
         ["**The enquiry form:** your name, your trade or business, your phone number or email address, and your message (optional).",
@@ -69,9 +69,26 @@ def _inline_html(t):
     t = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', t)
     return re.sub(r"(\[[A-Z][^\]]*\])", r'<span class="ph">\1</span>', t)
 
-def to_html(cookie_button):
-    out = [f'<p>{_inline_html(INTRO)}</p>', f'<p class="lede">{LEDE}</p>']
+def _ico_line(ico):
+    """ico: None = hide the line (e.g. exempt); "pending" = visible [ICO REG NO: pending]; anything else = the number."""
+    if ico is None: return None
+    return "ICO registration number: " + ("[ICO REG NO: pending]" if ico == "pending" else ico)
+
+def _sections(ico):
+    out = []
     for h, blocks in SECTIONS:
+        nb = []
+        for b in blocks:
+            if isinstance(b, list):
+                b = [(_ico_line(ico) if x == "{ICO_LINE}" else x) for x in b]
+                b = [x for x in b if x is not None]
+            nb.append(b)
+        out.append((h, nb))
+    return out
+
+def to_html(cookie_button, ico=None):
+    out = [f'<p>{_inline_html(INTRO)}</p>', f'<p class="lede">{LEDE}</p>']
+    for h, blocks in _sections(ico):
         out.append(f"<h2>{h}</h2>")
         for b in blocks:
             if isinstance(b, list):
@@ -82,12 +99,12 @@ def to_html(cookie_button):
                 out.append(f"<p>{_inline_html(b)}</p>")
     return "\n ".join(out)
 
-def to_markdown():
+def to_markdown(ico=None):
     def md(t):
         t = _h.unescape(re.sub(r"</?code>", "`", t))
         return t
     out = ["# Privacy notice: TW Results (DRAFT)", "", md(INTRO), "", md(LEDE), ""]
-    for h, blocks in SECTIONS:
+    for h, blocks in _sections(ico):
         out += [f"## {h}", ""]
         for b in blocks:
             if isinstance(b, list):

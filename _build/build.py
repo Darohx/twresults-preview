@@ -417,7 +417,10 @@ contact = f"""
 # ---------------- Privacy ----------------
 import sys as _sys; _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import privacy_notice
-PRIVACY_HTML = privacy_notice.to_html('<p><button class="btn btn-s" type="button" data-cookie-reset>Change my cookie choice</button></p>')
+# ICO FLAG: None = no ICO line on the privacy page (e.g. if Dan is exempt from the data protection fee);
+# "pending" = shows [ICO REG NO: pending]; a real number, e.g. "ZB123456" = shows "ICO registration number: ZB123456".
+ICO_REG = None
+PRIVACY_HTML = privacy_notice.to_html('<p><button class="btn btn-s" type="button" data-cookie-reset>Change my cookie choice</button></p>', ico=ICO_REG)
 privacy = f"""
 <section class="page-hero on-navy"><div class="wrap">
  <h1>Privacy</h1>
