@@ -5,7 +5,7 @@ Static HTML/CSS with a little JavaScript. No framework, no third-party calls exc
 ## Pages
 `/` Home · `/what-we-do/` · `/results/` (Eaton Embroidery client case study) · `/contact/` · `/privacy/` · `404.html` (the About Dan page was removed on 20/10/2026)
 
-v11 (22/10/2026): Vibe theme approved by Dan and folded into assets/site.css (richer sky/royal accents, hero gradient and glow, sky CTA buttons, band contrast). /vibe/ copy removed. V = 13.
+v11 (22/10/2026): ICO_REG = None (line hidden until Dan has his number). Vibe theme approved by Dan and folded into assets/site.css (richer sky/royal accents, hero gradient and glow, sky CTA buttons, band contrast). /vibe/ copy removed. V = 13.
 
 v10 (22/10/2026): Dan approved the privacy notice and the launch (22/10/2026). Draft marker removed, Last updated 22/10/2026, ICO still pending, [LEGAL CHECK] note hidden on the page (kept in Privacy_Notice_DRAFT.md). Formspree endpoint set: https://formspree.io/f/mpppajjr.
 
