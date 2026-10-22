@@ -14,10 +14,14 @@ OUT=/workspace/twresults-live
 PROD_REPO=Darohx/twresults.com
 ID=(-c user.name=Darohx -c user.email=dan@twresults.com)
 
-# 1. Endpoint into the source
-sed -i "s#^FORM_ENDPOINT = \"\[FORM ENDPOINT\]\"#FORM_ENDPOINT = \"$ENDPOINT\"#" "$SRC/_build/build.py"
-grep -q "^FORM_ENDPOINT = \"$ENDPOINT\"" "$SRC/_build/build.py" || { echo "Endpoint not set in build.py"; exit 1; }
-( cd "$SRC" && python3 _build/build.py && git add -A && git "${ID[@]}" commit -qm "Formspree endpoint set" && git push -q origin main )
+# 1. Endpoint into the source (skipped if already set to this endpoint)
+if grep -q "^FORM_ENDPOINT = \"$ENDPOINT\"" "$SRC/_build/build.py"; then
+  echo "Endpoint already set, skipping step 1"
+else
+  sed -i "s#^FORM_ENDPOINT = \".*\"#FORM_ENDPOINT = \"$ENDPOINT\"#" "$SRC/_build/build.py"
+  grep -q "^FORM_ENDPOINT = \"$ENDPOINT\"" "$SRC/_build/build.py" || { echo "Endpoint not set in build.py"; exit 1; }
+  ( cd "$SRC" && python3 _build/build.py && git add -A && git "${ID[@]}" commit -qm "Formspree endpoint set" && git push -q origin main )
+fi
 
 # 2. Live build in a clean copy
 rm -rf "$OUT"; mkdir -p "$OUT"
