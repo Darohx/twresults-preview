@@ -5,6 +5,8 @@ Static HTML/CSS with a little JavaScript. No framework, no third-party calls exc
 ## Pages
 `/` Home · `/what-we-do/` · `/results/` (Eaton Embroidery client case study) · `/contact/` · `/privacy/` · `404.html` (the About Dan page was removed on 20/10/2026)
 
+v10 (22/10/2026): Dan approved the privacy notice and the launch (22/10/2026). Draft marker removed, Last updated 22/10/2026, ICO still pending, [LEGAL CHECK] note hidden on the page (kept in Privacy_Notice_DRAFT.md). Formspree endpoint set: https://formspree.io/f/mpppajjr.
+
 v9c (22/10/2026): `ICO_REG` flag in build.py for the privacy page: `"pending"` (default) shows [ICO REG NO: pending], a real number (e.g. `"ZB123456"`) shows it, `None` hides the whole line. Go-live script `_build/go_live.sh <formspree endpoint>` prepared (not run): sets the endpoint, builds `--live`, adds CNAME twresults.com, pushes to a new repo Darohx/twresults.com and enables Pages. DNS is done by hand afterwards (see Namecheap_GoLive_Steps.txt).
 
 v9b (20/10/2026): case study screenshot slots removed for launch; `CASE_STUDY_SHOTS = []` in build.py brings them back (list the dates, e.g. ["10/09/2026", "07/10/2026"]). Privacy: Formspree transfers described as relying on SCCs per formspree.io/security, with [LEGAL CHECK] note.

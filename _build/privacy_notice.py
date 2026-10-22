@@ -3,7 +3,7 @@ Each section is (heading, [blocks]); a block is a string (paragraph) or a list (
 Inline markup: **bold** and [link text](url). Placeholders in [CAPS] are shown as visible markers."""
 
 EMAIL = "dan@twresults.com"
-INTRO = "[DRAFT: Dan to approve] Last updated [DATE OF APPROVAL]."
+INTRO = "Last updated 22/10/2026."
 LEDE = "This notice explains what personal data I collect through this website and when you contact me, why, and what your rights are."
 
 SECTIONS = [
@@ -58,7 +58,7 @@ SECTIONS = [
         "If you&rsquo;re unhappy with how I&rsquo;ve handled your data, you can complain to the Information Commissioner&rsquo;s Office at [ico.org.uk](https://ico.org.uk) or on 0303 123 1113. I&rsquo;d appreciate the chance to put it right first, so please contact me before you go to the ICO.",
     ]),
     ("Changes to this notice", [
-        "If anything changes, I&rsquo;ll update this page. The date shows the latest version. Last updated [DATE OF APPROVAL].",
+        "If anything changes, I&rsquo;ll update this page. The date shows the latest version. Last updated 22/10/2026.",
     ]),
 ]
 
@@ -87,6 +87,11 @@ def _sections(ico):
     return out
 
 def to_html(cookie_button, ico="pending"):
+    # The [LEGAL CHECK ...] note stays in the markdown copy only, never on the page.
+    import re as _re
+    return _re.sub(r'\s*(<span class="ph">)?\[LEGAL CHECK[^\]]*\](</span>)?', '', _to_html(cookie_button, ico))
+
+def _to_html(cookie_button, ico="pending"):
     out = [f'<p>{_inline_html(INTRO)}</p>', f'<p class="lede">{LEDE}</p>']
     for h, blocks in _sections(ico):
         out.append(f"<h2>{h}</h2>")
@@ -103,7 +108,7 @@ def to_markdown(ico="pending"):
     def md(t):
         t = _h.unescape(re.sub(r"</?code>", "`", t))
         return t
-    out = ["# Privacy notice: TW Results (DRAFT)", "", md(INTRO), "", md(LEDE), ""]
+    out = ["# Privacy notice: TW Results (approved by Dan 22/10/2026)", "", md(INTRO), "", md(LEDE), ""]
     for h, blocks in _sections(ico):
         out += [f"## {h}", ""]
         for b in blocks:
