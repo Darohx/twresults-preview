@@ -1,0 +1,20 @@
+/* VIBE theme: override layer on site.css. Brand palette kept; accents from TWR marketing (#8FC9F5 sky, #1E3166, #0B1020). */
+:root{--navy:#121F45;--deep:#0B1020;--royal:#1E3166;--sky:#8FC9F5;--ice:#A5D6F8;--pale:#EEF2FA;--line:rgba(18,31,69,.16)}
+.navy,.hero-navy,.page-hero,.band.navy,.on-navy{background:radial-gradient(1200px 520px at 85% -10%,rgba(143,201,245,.22),transparent 60%),radial-gradient(800px 420px at -10% 110%,rgba(30,49,102,.9),transparent 70%),linear-gradient(160deg,var(--royal) 0%,var(--navy) 45%,var(--deep) 100%)}
+.hero-navy{position:relative;overflow:hidden}
+.hero-navy::after{content:"";position:absolute;inset:auto -10% -1px -10%;height:3px;background:linear-gradient(90deg,transparent,var(--sky),transparent);opacity:.8}
+.hero-navy h1{background:linear-gradient(180deg,#fff 55%,#d6ebfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-navy .kw,.on-navy .lede{color:var(--ice)}
+.btn{border-radius:10px;transition:transform .15s ease,box-shadow .2s ease,background .2s}
+.btn:hover{transform:translateY(-1px)}
+.on-navy .btn,.navy .btn,.hero-navy .btn,.callbar .btn{background:var(--sky);border-color:var(--sky);color:var(--deep);box-shadow:0 8px 28px rgba(143,201,245,.35),inset 0 1px 0 rgba(255,255,255,.5)}
+.on-navy .btn:hover,.navy .btn:hover,.hero-navy .btn:hover,.callbar .btn:hover{background:#B5DCFA;border-color:#B5DCFA;box-shadow:0 10px 34px rgba(143,201,245,.5)}
+.btn:not(.on-navy .btn){box-shadow:0 6px 20px rgba(18,31,69,.18)}
+.pale{background:linear-gradient(180deg,#EEF2FA,#E3EAF7)}
+.bigstats b,.big{background:linear-gradient(135deg,var(--royal),#3B6FC4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.on-navy .bigstats b,.navy .big{background:linear-gradient(135deg,#fff,var(--sky));-webkit-background-clip:text;background-clip:text}
+.formcard{box-shadow:0 24px 60px rgba(11,16,32,.35);border-radius:14px}
+.f input:focus,.f textarea:focus{border-color:#3B6FC4;box-shadow:0 0 0 4px rgba(143,201,245,.35)}
+.faq summary::after,.steps li::before{color:#3B6FC4}
+a:hover{color:#3B6FC4}.on-navy a:hover{color:var(--sky)}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}.btn:hover{transform:none}}
