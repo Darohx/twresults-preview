@@ -263,7 +263,7 @@ home = f"""
   <p class="kw">Local SEO, Google Maps and websites for trades and local businesses in {REACH}.</p>
   <div class="cta"><a class="btn btn-w" href="#enquiry">Get a free Google check</a>{f'<a class="tel" href="{TEL}">Call Dan: {PHONE}</a>' if HAS_PHONE else ""}</div>
  </div>
- <div class="hero-proof"><span class="n" aria-hidden="true">#2</span><span class="t">on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks. A Derby client.</span></div>
+ <div class="hero-proof"><span class="n" aria-hidden="true">#2</span><span class="t">on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks. A Derby business.</span></div>
  </div>
 </section>
 
@@ -301,7 +301,7 @@ home = f"""
   {big_stats()}
   <div class="split">
   <div>
-   <p class="lede">Eaton Embroidery, a Derby embroidery business, is a client.</p>
+   <p class="lede">Eaton Embroidery is a Derby embroidery business. Its website and Google profile were built from scratch by TW Results.</p>
    <p>{EE_WORK}</p>
    <p class="small">{EE_START} {EE_CHECKS}</p>
    <p style="margin-top:1.5rem"><a class="link" href="results/">See the case study</a></p>
@@ -372,7 +372,7 @@ results = f"""
 <section class="page-hero on-navy"><div class="wrap">
  {crumbs_html(RES_CRUMBS, 1)}
  <h1>Local SEO case study: an embroidery business in Derby</h1>
- <p class="lede">Eaton Embroidery is a Derby embroidery business and a TW Results client. I built its website and Google Business Profile and took it to #2 on Google Maps for &ldquo;embroidery Derby&rdquo; within a few weeks.</p>
+ <p class="lede">Eaton Embroidery is a Derby embroidery business. Its website and Google Business Profile were built from scratch by TW Results, and it reached #2 on Google Maps for &ldquo;embroidery Derby&rdquo; within a few weeks.</p>
  {big_stats()}
 </div></section>
 <section class="sec" aria-labelledby="h-work"><div class="wrap"><div class="split">
