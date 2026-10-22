@@ -90,3 +90,25 @@
     }
   }
 })();
+
+/* Sticky mobile CTA bar: shown only once the page's own CTA buttons are out of view (hero CTA, or after 300px if the page has none), and never while the enquiry form is visible. */
+(function () {
+  var bar = document.querySelector(".callbar");
+  if (!bar) return;
+  var hero = document.querySelector("main > section:first-of-type .cta .btn");
+  var watch = Array.prototype.slice.call(document.querySelectorAll("main .cta .btn"));
+  var form = document.getElementById("enquiry");
+  if (form) watch.push(form);
+  var inView = new Set();
+  function update() {
+    var past = hero ? true : (window.scrollY > 300);
+    bar.classList.toggle("show", past && inView.size === 0);
+  }
+  if (!("IntersectionObserver" in window)) { bar.classList.add("show"); return; }
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { e.isIntersecting ? inView.add(e.target) : inView.delete(e.target); });
+    update();
+  });
+  watch.forEach(function (el) { io.observe(el); });
+  if (!hero) window.addEventListener("scroll", update, { passive: true });
+})();

@@ -326,3 +326,9 @@ p{margin:0 0 1em;max-width:60ch}
 .faq summary::after,.steps li::before{color:#3B6FC4}
 a:hover{color:#3B6FC4}.on-navy a:hover{color:var(--sky)}
 @media (prefers-reduced-motion:reduce){.btn{transition:none}.btn:hover{transform:none}}
+/* Sticky mobile CTA bar: hidden until the page's primary CTA has scrolled away (site.js adds .show). Stays hidden without JS. */
+@media (max-width:760px){
+ .callbar{transform:translateY(110%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
+ .callbar.show{transform:none;visibility:visible;transition:transform .3s ease,visibility 0s}
+}
+@media (prefers-reduced-motion:reduce){.callbar,.callbar.show{transition:none}}
