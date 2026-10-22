@@ -21,7 +21,7 @@ grep -q "^FORM_ENDPOINT = \"$ENDPOINT\"" "$SRC/_build/build.py" || { echo "Endpo
 
 # 2. Live build in a clean copy
 rm -rf "$OUT"; mkdir -p "$OUT"
-rsync -a --exclude .git --exclude '_build/__pycache__' "$SRC/" "$OUT/"
+cp -a "$SRC/." "$OUT/" && rm -rf "$OUT/.git" "$OUT/_build/__pycache__"
 ( cd "$OUT" && python3 _build/build.py --live )
 grep -q 'noindex' "$OUT/index.html" && { echo "noindex still in live build, stopping"; exit 1; } || true
 grep -q 'Disallow: /$' "$OUT/robots.txt" && { echo "robots still disallow-all, stopping"; exit 1; } || true
