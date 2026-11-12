@@ -151,7 +151,7 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None):
 <main id="main">
 {body}
 </main>
-<footer class="legal-bar"><div class="wrap"><p>&copy; 2026 TW | Results, {ADDRESS}. {f'<a href="{TEL}">{PHONE}</a> &middot; ' if HAS_PHONE else ""}<a href="mailto:{EMAIL}">{EMAIL}</a> &middot; <a href="{p}privacy/">Privacy</a></p></div></footer>
+<footer class="legal-bar"><div class="wrap"><p>&copy; 2026 TW | Results, {ADDRESS}. {f'<a href="{TEL}" style="white-space:nowrap">{PHONE}</a> &middot; ' if HAS_PHONE else ""}<a href="mailto:{EMAIL}">{EMAIL}</a> &middot; <a href="{p}privacy/">Privacy</a></p></div></footer>
 <div class="callbar on-navy">{bar_btn}</div>
 <div class="cookie" id="cookie" hidden role="region" aria-label="Cookies">
  <div class="wrap"><p>Can we use analytics cookies to see how the site is used? <a href="{p}privacy/">Privacy</a></p>
@@ -261,7 +261,7 @@ home = f"""
  <div class="wrap hero-n-grid"><div>
   <h1 id="h1">{TAGLINE}</h1>
   <p class="kw">Local SEO, Google Maps and websites for trades and local businesses in {REACH}.</p>
-  <div class="cta"><a class="btn btn-w" href="#enquiry">Get a free Google check</a>{f'<a class="tel" href="{TEL}">Call Dan: {PHONE}</a>' if HAS_PHONE else ""}</div>
+  <div class="cta"><a class="btn btn-w" href="#enquiry">Get a free Google check</a></div>
  </div>
  <div class="hero-proof"><span class="n" aria-hidden="true">#2</span><span class="t">on Google Maps for &ldquo;embroidery Derby&rdquo; in a few weeks. A Derby business.</span></div>
  </div>
