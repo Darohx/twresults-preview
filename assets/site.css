@@ -290,7 +290,7 @@ p{margin:0 0 1em;max-width:60ch}
 .problem h2{max-width:16ch}
 /* v8: final CTA last, slim legal line, compact cookie bar */
 .legal-bar{background:var(--white);border-top:1px solid var(--line);padding:16px 0;font-size:.8125rem;color:var(--grey)}
-.legal-bar p{margin:0}.legal-bar a{color:var(--grey)}.legal-bar .ph{font-weight:400}
+.legal-bar p{margin:0;max-width:none}.legal-bar a{color:var(--grey)}.legal-bar .ph{font-weight:400}
 .final-cta p{margin:.6rem 0 0;color:var(--ice)}
 .cookie{padding:10px 0}.cookie p{font-size:.875rem}.cookie .btn{min-height:38px}
 @media (max-width:760px){body{padding-bottom:74px}.cookie .wrap{flex-wrap:nowrap;gap:10px}.cookie p{font-size:.8125rem}}

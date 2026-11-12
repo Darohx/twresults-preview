@@ -10,7 +10,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://twresults.com"
 LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
-V = "14"  # asset cache-buster
+V = "15"  # asset cache-buster
 
 # PHONE: TW | Results line, live 12/11/2026. Display format for visible text, E.164 for tel: links and schema.
 # Never use the old mobile number on this site. Setting both shows every Call Dan button, the footer and
