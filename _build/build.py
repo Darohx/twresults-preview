@@ -12,11 +12,11 @@ LASTMOD = "2026-10-18"
 PREVIEW_BASE = "/twresults-preview/"
 V = "14"  # asset cache-buster
 
-# PHONE FLAG: leave PHONE_DISPLAY = None until the giffgaff number is live. [TWR PHONE: giffgaff number to come]
-# Set both, e.g. PHONE_DISPLAY = "07xxx xxxxxx" and PHONE_E164 = "+447xxxxxxxxx" (NEVER 07944 915880),
-# and every Call Dan button, the footer number, the contact number and schema "telephone" appear automatically.
-PHONE_DISPLAY = None
-PHONE_E164 = None
+# PHONE: TW | Results line, live 12/11/2026. Display format for visible text, E.164 for tel: links and schema.
+# Never use the old mobile number on this site. Setting both shows every Call Dan button, the footer and
+# contact numbers and schema "telephone"; set both to None to hide them again.
+PHONE_DISPLAY = "07810 734023"
+PHONE_E164 = "+447810734023"
 HAS_PHONE = bool(PHONE_DISPLAY and PHONE_E164)
 PHONE = PHONE_DISPLAY or ""
 TEL = "tel:" + (PHONE_E164 or "")
@@ -151,7 +151,7 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None):
 <main id="main">
 {body}
 </main>
-<footer class="legal-bar"><div class="wrap"><p>&copy; 2026 TW Results, {ADDRESS}. <a href="mailto:{EMAIL}">{EMAIL}</a> &middot; <a href="{p}privacy/">Privacy</a></p></div></footer>
+<footer class="legal-bar"><div class="wrap"><p>&copy; 2026 TW | Results, {ADDRESS}. {f'<a href="{TEL}">{PHONE}</a> &middot; ' if HAS_PHONE else ""}<a href="mailto:{EMAIL}">{EMAIL}</a> &middot; <a href="{p}privacy/">Privacy</a></p></div></footer>
 <div class="callbar on-navy">{bar_btn}</div>
 <div class="cookie" id="cookie" hidden role="region" aria-label="Cookies">
  <div class="wrap"><p>Can we use analytics cookies to see how the site is used? <a href="{p}privacy/">Privacy</a></p>

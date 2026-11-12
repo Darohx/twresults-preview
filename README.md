@@ -51,7 +51,7 @@ The preview lives at https://darohx.github.io/twresults-preview/ and must not be
 ## Placeholders to replace (search for `[`)
 | Placeholder | Where | Notes |
 |---|---|---|
-| Phone (flag) | `PHONE_DISPLAY` / `PHONE_E164` in build.py | Currently `None`, so every Call Dan button, the footer/contact number and schema `telephone` are left out, and the header/sticky buttons point to the form (`#enquiry`). Set both and rebuild: they all reappear. **Never 07944 915880.** |
+| Phone (flag) | `PHONE_DISPLAY` / `PHONE_E164` in build.py | Set 12/11/2026: `07810 734023` / `+447810734023`. Shows the Call Dan buttons (header and mobile sticky bar), the home hero, footer and contact numbers, and schema `telephone`. Set both to `None` to hide them again. **Never use the old mobile number.** |
 | `[FORM ENDPOINT]` | `FORM_ENDPOINT` in build.py (home + contact forms) | Formspree endpoint `https://formspree.io/f/...` |
 | Headshot (flag) | `HEADSHOT` in build.py | `None` = no photo and no placeholder. Set to an image path (e.g. `assets/dan.webp`, square, at least 192 x 192px) and rebuild: a small photo shows beside "You deal with me, Dan" on home |
 | `[DAN TO ADD 1 TO 2 LINES OF REAL BACKGROUND]` | about | |
