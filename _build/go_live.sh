@@ -33,6 +33,7 @@ grep -rq '\[FORM ENDPOINT\]' "$OUT"/*.html "$OUT"/*/index.html && { echo "endpoi
 grep -rq "07944" --include=*.html "$OUT" && { echo "Found 07944 in the pages, stopping"; exit 1; } || true
 echo "twresults.com" > "$OUT/CNAME"
 rm -rf "$OUT/_build"   # build tooling is not published on production
+rm -f "$OUT/README.md"   # internal notes stay in the source repo, never published (23/11/2026)
 
 # 3. New production repo + Pages
 cd "$OUT"

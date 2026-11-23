@@ -107,8 +107,9 @@ def page(slug, title, desc, body, schema=None, depth=1, current=None):
     navli = "".join('<li><a href="%s%s"%s>%s</a></li>' % (p, u, ' aria-current="page"' if u == current else "", t) for u, t in NAV)
     sch = "".join('<script type="application/ld+json">%s</script>\n' % json.dumps(s, ensure_ascii=False, separators=(",", ":")) for s in (schema or []))
     form_href = "#enquiry" if (slug in ("", "contact/") or slug.startswith("areas/")) else p + "contact/#enquiry"
-    head_btn = f'<a class="btn" href="{TEL}">Call Dan</a>' if HAS_PHONE else f'<a class="btn" href="{form_href}">Free Google check</a>'
-    bar_btn = f'<a class="btn" href="{TEL}">Call Dan</a>' if HAS_PHONE else f'<a class="btn" href="{form_href}">Get a free Google check</a>'
+    # Header and sticky bar stay on the form CTA even with a phone set (Dan, 23/11/2026: "free Google Check sounds best").
+    head_btn = f'<a class="btn" href="{form_href}">Free Google check</a>'
+    bar_btn = f'<a class="btn" href="{form_href}">Get a free Google check</a>'
     nav_html = "" if slug == "" else f'<button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>\n  <nav class="nav" id="nav" aria-label="Main"><ul>{navli}</ul></nav>'
     tail = body.rstrip()[-600:]
     if slug != "contact/" and 'class="band' not in tail:
@@ -419,7 +420,7 @@ import sys as _sys; _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__
 import privacy_notice
 # ICO FLAG: None = no ICO line on the privacy page (e.g. if Dan is exempt from the data protection fee);
 # "pending" = shows [ICO REG NO: pending]; a real number, e.g. "ZB123456" = shows "ICO registration number: ZB123456".
-ICO_REG = None
+ICO_REG = "ZC282123"  # Dan's ICO certificate, 23/11/2026
 PRIVACY_HTML = privacy_notice.to_html('<p><button class="btn btn-s" type="button" data-cookie-reset>Change my cookie choice</button></p>', ico=ICO_REG)
 privacy = f"""
 <section class="page-hero on-navy"><div class="wrap">
